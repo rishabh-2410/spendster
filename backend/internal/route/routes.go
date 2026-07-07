@@ -27,6 +27,11 @@ func (r *Router) RegisterRoutes() {
 		r.userHandler.HandleUserLogin,
 	)
 
+	http.HandleFunc(
+		"POST /api/v1/auth/logout",
+		r.userHandler.HandleUserLogout,
+	)
+
 	// http.HandleFunc(
 	// 	"GET /api/v1/users",
 	// 	r.userHandler.GetUserByEmail,

@@ -27,8 +27,9 @@ func main() {
 	fmt.Println("Connected successfully")
 
 	userRepository := repository.NewUserRepository(db)
+	tokenRepository := repository.NewTokenRepository(db)
 
-	userservice := userservice.NewUserService(userRepository)
+	userservice := userservice.NewUserService(userRepository, tokenRepository)
 
 	userHandler := userhandler.NewUserHandler(userservice)
 

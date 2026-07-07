@@ -12,18 +12,20 @@ import (
 )
 
 type UserService struct {
-	repo *repository.UserRepository
+	userRepo  *repository.UserRepository
+	tokenRepo *repository.TokenRepo
 }
 
-func NewUserService(repo *repository.UserRepository) *UserService {
+func NewUserService(userRepo *repository.UserRepository, tokenRepo *repository.TokenRepo) *UserService {
 	return &UserService{
-		repo: repo,
+		userRepo:  userRepo,
+		tokenRepo: tokenRepo,
 	}
 }
 
 func (us *UserService) RegisterUser(req *reqmodels.RegisterUserRequestDTO) error {
 
-	existingUser, err := us.repo.FindByEmail(req.Email)
+	existingUser, err := us.userRepo.FindByEmail(req.Email)
 	if err != nil && err.Error() != "sql: no rows in result set" {
 		return err
 	}
@@ -42,7 +44,7 @@ func (us *UserService) RegisterUser(req *reqmodels.RegisterUserRequestDTO) error
 		PasswordHash: string(hashBytes),
 	}
 
-	err = us.repo.AddUser(newUser)
+	err = us.userRepo.AddUser(newUser)
 	if err != nil {
 		return err
 	}
@@ -52,7 +54,7 @@ func (us *UserService) RegisterUser(req *reqmodels.RegisterUserRequestDTO) error
 }
 
 func (us *UserService) LoginUser(req *reqmodels.LoginUserRequestDTO) (*resmodels.LoginUserResponseDTO, error) {
-	user, err := us.repo.FindByEmail(req.Email)
+	user, err := us.userRepo.FindByEmail(req.Email)
 	if err != nil {
 		return nil, err
 	}
@@ -67,12 +69,36 @@ func (us *UserService) LoginUser(req *reqmodels.LoginUserRequestDTO) (*resmodels
 		return nil, err
 	}
 
+	refreshToken, err := utils.GenerateRefreshToken()
+	if err != nil {
+		return nil, err
+	}
+
+	hashedRefreshToken := utils.HashToken(refreshToken)
+
+	err = us.tokenRepo.SaveRefreshToken(user.ID, hashedRefreshToken)
+	if err != nil {
+		return nil, err
+	}
+
 	return &resmodels.LoginUserResponseDTO{
-		ID:          user.ID,
-		Name:        user.Name,
-		Email:       user.Email,
-		CreatedAt:   user.CreatedAt,
-		AccessToken: accessToken,
+		ID:           user.ID,
+		Name:         user.Name,
+		Email:        user.Email,
+		CreatedAt:    user.CreatedAt,
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
 	}, nil
 
+}
+
+func (us *UserService) LogoutUser(refreshToken string) error {
+	refreshTokenHash := utils.HashToken(refreshToken)
+
+	err := us.userRepo.RevokeUser(refreshTokenHash)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

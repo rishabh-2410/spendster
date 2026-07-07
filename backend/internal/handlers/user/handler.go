@@ -2,6 +2,7 @@ package user
 
 import (
 	"encoding/json"
+	models "expense-backend/internal/models/req_dto"
 	reqmodels "expense-backend/internal/models/req_dto"
 	user "expense-backend/internal/services/user"
 	"expense-backend/internal/validation"
@@ -77,6 +78,29 @@ func (userHandler *UserHandler) HandleUserLogin(w http.ResponseWriter, r *http.R
 
 	if err = json.NewEncoder(w).Encode(loggedUser); err != nil {
 		log.Print("failed to encode login response")
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+}
+
+func (userHandler *UserHandler) HandleUserLogout(w http.ResponseWriter, r *http.Request) {
+	var request *models.RefreshTokenRequestDTO
+
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+	err := decoder.Decode(&request)
+	if err != nil {
+		http.Error(w, "Invalid Request", http.StatusBadRequest)
+		return
+	}
+
+	if err = validation.Validate.Struct(request); err != nil {
+		http.Error(w, "Invalid Request", http.StatusBadRequest)
+		return
+	}
+
+	err = userHandler.userService.LogoutUser(request.RefreshToken)
+	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 	models "expense-backend/internal/models/db_object"
 )
 
@@ -69,4 +70,27 @@ func (ur *UserRepository) AddUser(user *models.User) error {
 
 	return nil
 
+}
+
+func (ur *UserRepository) RevokeUser(hashedToken string) error {
+
+	result, err := ur.db.Exec(
+		`UPDATE refresh_tokens
+		SET revoked_at = NOW()
+		WHERE token_hash = $1 AND revoked_at IS NULL
+		`, hashedToken)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return errors.New("refresh token not found or already revoked")
+	}
+
+	return nil
 }

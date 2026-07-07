@@ -1,6 +1,10 @@
 package utils
 
 import (
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/base64"
+	"encoding/hex"
 	"os"
 	"time"
 
@@ -33,4 +37,21 @@ func GenerateAccessToken(userID string) (string, error) {
 
 	return signedToken, nil
 
+}
+
+// Generate a string of random bytes -> returns something like BkVf8eZrN2kX9mJQ7pLw4A...
+func GenerateRefreshToken() (string, error) {
+	tokenBytes := make([]byte, 32)
+	_, err := rand.Read(tokenBytes)
+	if err != nil {
+		return "", err
+	}
+
+	return base64.RawURLEncoding.EncodeToString(tokenBytes), nil
+}
+
+// Hash token (used for refresh token since refresh token is some random bytes)
+func HashToken(token string) string {
+	hash := sha256.Sum256([]byte(token))
+	return hex.EncodeToString(hash[:])
 }
