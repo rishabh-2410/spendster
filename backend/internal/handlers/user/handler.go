@@ -27,13 +27,13 @@ func (userHandler *UserHandler) HandleRegisterUser(w http.ResponseWriter,
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(&request); err != nil {
-		http.Error(w, "Invalid Request Body", http.StatusBadRequest)
+		http.Error(w, "Invalid Request", http.StatusBadRequest)
 		return
 	}
 
 	err := validation.Validate.Struct(request)
 	if err != nil {
-		http.Error(w, "Invalid Request Body", http.StatusBadRequest)
+		http.Error(w, "Invalid Request", http.StatusBadRequest)
 		return
 	}
 
@@ -48,4 +48,36 @@ func (userHandler *UserHandler) HandleRegisterUser(w http.ResponseWriter,
 		return
 	}
 	w.WriteHeader(http.StatusOK)
+}
+
+func (userHandler *UserHandler) HandleUserLogin(w http.ResponseWriter, r *http.Request) {
+	var request reqmodels.LoginUserRequestDTO
+
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(&request); err != nil {
+		http.Error(w, "Invalid Request", http.StatusBadRequest)
+		return
+	}
+
+	err := validation.Validate.Struct(request)
+	if err != nil {
+		http.Error(w, "Invalid Request", http.StatusBadRequest)
+		return
+	}
+
+	loggedUser, err := userHandler.userService.LoginUser(&request)
+	if err != nil {
+		http.Error(w, "Invalid Credentials", http.StatusUnauthorized)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	if err = json.NewEncoder(w).Encode(loggedUser); err != nil {
+		log.Print("failed to encode login response")
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 }

@@ -4,7 +4,9 @@ import (
 	"errors"
 	models "expense-backend/internal/models/db_object"
 	reqmodels "expense-backend/internal/models/req_dto"
+	resmodels "expense-backend/internal/models/res_dto"
 	"expense-backend/internal/repository"
+	"expense-backend/internal/utils"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -46,5 +48,31 @@ func (us *UserService) RegisterUser(req *reqmodels.RegisterUserRequestDTO) error
 	}
 
 	return nil
+
+}
+
+func (us *UserService) LoginUser(req *reqmodels.LoginUserRequestDTO) (*resmodels.LoginUserResponseDTO, error) {
+	user, err := us.repo.FindByEmail(req.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password))
+	if err != nil {
+		return nil, err
+	}
+
+	accessToken, err := utils.GenerateAccessToken(user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &resmodels.LoginUserResponseDTO{
+		ID:          user.ID,
+		Name:        user.Name,
+		Email:       user.Email,
+		CreatedAt:   user.CreatedAt,
+		AccessToken: accessToken,
+	}, nil
 
 }
