@@ -29,11 +29,11 @@ frontend:
 
 # Start Go backend
 backend:
-	cd backend && go run .
+	cd backend && go run ./cmd/app.go
 
 # Start both (backend in background)
 dev:
-	(cd backend && go run .) &
+	(cd backend && go run ./cmd/app.go) &
 	cd frontend && npx expo start
 
 # Build backend binary
