@@ -1,17 +1,21 @@
 package route
 
 import (
-	userHandler "expense-backend/internal/handlers/user"
+	"expense-backend/internal/auth"
+	expense "expense-backend/internal/handlers/expense"
+	user "expense-backend/internal/handlers/user"
 	"net/http"
 )
 
 type Router struct {
-	userHandler *userHandler.UserHandler
+	userHandler    *user.Handler
+	expenseHandler *expense.Handler
 }
 
-func NewRouter(userHandler *userHandler.UserHandler) *Router {
+func NewRouter(userHandler *user.Handler, expenseHandler *expense.Handler) *Router {
 	return &Router{
-		userHandler: userHandler,
+		userHandler:    userHandler,
+		expenseHandler: expenseHandler,
 	}
 }
 
@@ -30,6 +34,13 @@ func (r *Router) RegisterRoutes() {
 	http.HandleFunc(
 		"POST /api/v1/auth/logout",
 		r.userHandler.HandleUserLogout,
+	)
+
+	http.Handle(
+		"POST /api/v1/expenses",
+		auth.Middleware(
+			http.HandlerFunc(r.expenseHandler.HandleAddExpense),
+		),
 	)
 
 	// http.HandleFunc(

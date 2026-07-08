@@ -1,4 +1,4 @@
-package utils
+package auth
 
 import (
 	"crypto/rand"
@@ -14,10 +14,12 @@ import (
 func GenerateAccessToken(userID string) (string, error) {
 
 	// Create claims map
-	claims := jwt.MapClaims{
-		"user_id": userID,
-		"exp":     time.Now().Add(15 * time.Minute).Unix(),
-		"iat":     time.Now().Unix(),
+	claims := Claims{
+		UserID: userID,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+		},
 	}
 
 	// Create token
@@ -54,4 +56,25 @@ func GenerateRefreshToken() (string, error) {
 func HashToken(token string) string {
 	hash := sha256.Sum256([]byte(token))
 	return hex.EncodeToString(hash[:])
+}
+
+func ParseAccessToken(tokenstring string) (*Claims, error) {
+	claims := &Claims{}
+
+	token, err := jwt.ParseWithClaims(
+		tokenstring,
+		claims,
+		func(token *jwt.Token) (any, error) {
+			return []byte(os.Getenv("JWT_SECRET")), nil
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, jwt.ErrTokenInvalidClaims
+	}
+
+	return claims, nil
 }

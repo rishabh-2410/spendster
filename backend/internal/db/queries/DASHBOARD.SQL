@@ -11,7 +11,7 @@ SELECT
     COALESCE(
         SUM(
             CASE
-                WHEN DATE(date_of_expense) = CURRENT_DATE
+                WHEN date_of_expense = CURRENT_DATE
                 THEN amount
                 ELSE 0
             END
@@ -33,4 +33,4 @@ SELECT
     COUNT(*) AS total_expenses
 
 FROM expenses
-WHERE user_id = '5122613a-4814-4349-9c6f-888261c202e5'
+WHERE user_id = '0f2268e7-bc17-4814-a458-0dfd66967ce2'

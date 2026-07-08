@@ -6,17 +6,17 @@ import (
 	models "expense-backend/internal/models/db_object"
 )
 
-type UserRepository struct {
+type User struct {
 	db *sql.DB
 }
 
-func NewUserRepository(db *sql.DB) *UserRepository {
-	return &UserRepository{
+func NewUserRepository(db *sql.DB) *User {
+	return &User{
 		db: db,
 	}
 }
 
-func (ur *UserRepository) FindByEmail(email string) (*models.User, error) {
+func (ur *User) FindByEmail(email string) (*models.User, error) {
 	var user models.User
 	err := ur.db.QueryRow(`
 		SELECT * FROM users WHERE email=$1
@@ -36,7 +36,7 @@ func (ur *UserRepository) FindByEmail(email string) (*models.User, error) {
 	return &user, nil
 }
 
-func (ur *UserRepository) FindById(id string) (*models.User, error) {
+func (ur *User) FindById(id string) (*models.User, error) {
 	var user models.User
 	err := ur.db.QueryRow(`
 		SELECT * FROM users WHERE id=$1
@@ -56,7 +56,7 @@ func (ur *UserRepository) FindById(id string) (*models.User, error) {
 	return &user, nil
 }
 
-func (ur *UserRepository) AddUser(user *models.User) error {
+func (ur *User) AddUser(user *models.User) error {
 	err := ur.db.QueryRow(`INSERT INTO users(
     name,
     email,
@@ -72,7 +72,7 @@ func (ur *UserRepository) AddUser(user *models.User) error {
 
 }
 
-func (ur *UserRepository) RevokeUser(hashedToken string) error {
+func (ur *User) RevokeUser(hashedToken string) error {
 
 	result, err := ur.db.Exec(
 		`UPDATE refresh_tokens

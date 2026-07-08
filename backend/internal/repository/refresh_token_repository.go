@@ -5,17 +5,17 @@ import (
 	"errors"
 )
 
-type TokenRepo struct {
+type Token struct {
 	db *sql.DB
 }
 
-func NewTokenRepository(db *sql.DB) *TokenRepo {
-	return &TokenRepo{
+func NewTokenRepository(db *sql.DB) *Token {
+	return &Token{
 		db: db,
 	}
 }
 
-func (tr *TokenRepo) SaveRefreshToken(userID string, refreshToken string) error {
+func (tr *Token) SaveRefreshToken(userID string, refreshToken string) error {
 	result, err := tr.db.Exec(
 		`INSERT INTO refresh_tokens(
     	user_id,

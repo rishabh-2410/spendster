@@ -2,9 +2,11 @@ package main
 
 import (
 	conn "expense-backend/internal/db/conn"
+	expenseHandler "expense-backend/internal/handlers/expense"
 	userhandler "expense-backend/internal/handlers/user"
 	"expense-backend/internal/repository"
 	routes "expense-backend/internal/route"
+	expenseservice "expense-backend/internal/services/expense"
 	userservice "expense-backend/internal/services/user"
 	"expense-backend/internal/validation"
 	"fmt"
@@ -28,12 +30,15 @@ func main() {
 
 	userRepository := repository.NewUserRepository(db)
 	tokenRepository := repository.NewTokenRepository(db)
+	expenseRepository := repository.NewExpenseRepository(db)
 
-	userservice := userservice.NewUserService(userRepository, tokenRepository)
+	userservice := userservice.New(userRepository, tokenRepository)
+	expenseservice := expenseservice.New(userRepository, expenseRepository)
 
-	userHandler := userhandler.NewUserHandler(userservice)
+	userHandler := userhandler.New(userservice)
+	expenseHandler := expenseHandler.New(expenseservice)
 
-	router := routes.NewRouter(userHandler)
+	router := routes.NewRouter(userHandler, expenseHandler)
 
 	router.RegisterRoutes()
 

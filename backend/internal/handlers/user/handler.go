@@ -1,4 +1,4 @@
-package user
+package handlers
 
 import (
 	"encoding/json"
@@ -10,17 +10,17 @@ import (
 	"net/http"
 )
 
-type UserHandler struct {
-	userService *user.UserService
+type Handler struct {
+	userService *user.Service
 }
 
-func NewUserHandler(userService *user.UserService) *UserHandler {
-	return &UserHandler{
+func New(userService *user.Service) *Handler {
+	return &Handler{
 		userService: userService,
 	}
 }
 
-func (userHandler *UserHandler) HandleRegisterUser(w http.ResponseWriter,
+func (userHandler *Handler) HandleRegisterUser(w http.ResponseWriter,
 	r *http.Request) {
 
 	var request reqmodels.RegisterUserRequestDTO
@@ -51,7 +51,7 @@ func (userHandler *UserHandler) HandleRegisterUser(w http.ResponseWriter,
 	w.WriteHeader(http.StatusOK)
 }
 
-func (userHandler *UserHandler) HandleUserLogin(w http.ResponseWriter, r *http.Request) {
+func (userHandler *Handler) HandleUserLogin(w http.ResponseWriter, r *http.Request) {
 	var request reqmodels.LoginUserRequestDTO
 
 	decoder := json.NewDecoder(r.Body)
@@ -83,7 +83,7 @@ func (userHandler *UserHandler) HandleUserLogin(w http.ResponseWriter, r *http.R
 	}
 }
 
-func (userHandler *UserHandler) HandleUserLogout(w http.ResponseWriter, r *http.Request) {
+func (userHandler *Handler) HandleUserLogout(w http.ResponseWriter, r *http.Request) {
 	var request *models.RefreshTokenRequestDTO
 
 	decoder := json.NewDecoder(r.Body)
