@@ -120,3 +120,56 @@ func (er *Expense) DeleteExpense(docID string, userID string) error {
 
 	return nil
 }
+
+func (er *Expense) FetchExpenses(userID string) ([]dbmodels.Expense, error) {
+	expenses := make([]dbmodels.Expense, 0)
+
+	rows, err := er.db.Query(`
+		SELECT 
+			id,
+			user_id,
+			title,
+			amount,
+			date_of_expense,
+			category,
+			created_at,
+			updated_at
+		FROM expenses
+		WHERE user_id=$1
+		ORDER BY date_of_expense DESC, created_at DESC
+	`, userID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var expense dbmodels.Expense
+
+		err := rows.Scan(
+			&expense.ID,
+			&expense.UserID,
+			&expense.Title,
+			&expense.Amount,
+			&expense.DateOfExpense,
+			&expense.Category,
+			&expense.CreatedAt,
+			&expense.UpdatedAt,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		expenses = append(expenses, expense)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return expenses, nil
+
+}

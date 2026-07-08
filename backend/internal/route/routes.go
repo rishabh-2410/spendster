@@ -58,9 +58,16 @@ func (r *Router) RegisterRoutes() {
 	)
 
 	http.Handle(
-		"GET /api/v1/stats",
+		"GET /api/v1/dashboard",
 		auth.Middleware(
 			http.HandlerFunc(r.expenseHandler.HandleDashboardStats),
+		),
+	)
+
+	http.Handle(
+		"GET /api/v1/expenses",
+		auth.Middleware(
+			http.HandlerFunc(r.expenseHandler.HandleGetExpenses),
 		),
 	)
 

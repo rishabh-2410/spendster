@@ -91,3 +91,28 @@ func (es *Service) GetUserStats(userID string) (*resmodels.StatsResponseDTO, err
 
 	return stats, nil
 }
+
+func (es *Service) GetExpenses(userID string) ([]resmodels.ExpenseResponseDTO, error) {
+	expenses, err := es.ExpenseRepo.FetchExpenses(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	response := make([]resmodels.ExpenseResponseDTO, 0, len(expenses))
+
+	for _, expense := range expenses {
+		transformedExpense := resmodels.ExpenseResponseDTO{
+			ID:            expense.ID,
+			Amount:        expense.Amount,
+			Title:         expense.Title,
+			Category:      expense.Category,
+			CreatedAt:     expense.CreatedAt,
+			DateOfExpense: expense.DateOfExpense,
+			UpdatedAt:     expense.UpdatedAt,
+		}
+
+		response = append(response, transformedExpense)
+	}
+
+	return response, nil
+}

@@ -140,3 +140,23 @@ func (eh *Handler) HandleDashboardStats(w http.ResponseWriter, r *http.Request) 
 
 	json.NewEncoder(w).Encode(stats)
 }
+
+func (eh *Handler) HandleGetExpenses(w http.ResponseWriter, r *http.Request) {
+	userID, ok := requestcontext.GetUserID(r.Context())
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	expenses, err := eh.expenseService.GetExpenses(userID)
+	if err != nil {
+		log.Printf("error fetching expenses for user: %v", err)
+		http.Error(w, "Unable to fetch expenses", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	json.NewEncoder(w).Encode(expenses)
+}
