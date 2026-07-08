@@ -19,7 +19,7 @@ func New(userRepo *repository.User, expenseRepo *repository.Expense) *Service {
 	}
 }
 
-func (es *Service) AddExpense(userID string, req *reqmodels.AddExpenseRequestDTO) (*resmodels.AddExpenseResponseDTO, error) {
+func (es *Service) AddExpense(userID string, req *reqmodels.AddExpenseRequestDTO) (*resmodels.ExpenseResponseDTO, error) {
 	expense := &dbmodels.Expense{
 		UserID:        userID,
 		Title:         req.Title,
@@ -33,7 +33,7 @@ func (es *Service) AddExpense(userID string, req *reqmodels.AddExpenseRequestDTO
 		return nil, err
 	}
 
-	response := &resmodels.AddExpenseResponseDTO{
+	response := &resmodels.ExpenseResponseDTO{
 		ID:            newExpense.ID,
 		Title:         newExpense.Title,
 		Amount:        newExpense.Amount,
@@ -45,4 +45,32 @@ func (es *Service) AddExpense(userID string, req *reqmodels.AddExpenseRequestDTO
 
 	return response, nil
 
+}
+
+func (es *Service) EditExpense(userID string, docID string, req *reqmodels.EditExpenseRequestDTO) (*resmodels.ExpenseResponseDTO, error) {
+	updatedExpense, err := es.ExpenseRepo.UpdateExpense(docID, userID, req)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &resmodels.ExpenseResponseDTO{
+		ID:            updatedExpense.ID,
+		Title:         updatedExpense.Title,
+		Amount:        updatedExpense.Amount,
+		Category:      updatedExpense.Category,
+		DateOfExpense: updatedExpense.DateOfExpense,
+		CreatedAt:     updatedExpense.CreatedAt,
+		UpdatedAt:     updatedExpense.UpdatedAt,
+	}
+
+	return response, nil
+}
+
+func (es *Service) DeleteExpense(userID string, docID string) error {
+	err := es.ExpenseRepo.DeleteExpense(docID, userID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

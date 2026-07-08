@@ -43,6 +43,20 @@ func (r *Router) RegisterRoutes() {
 		),
 	)
 
+	http.Handle(
+		"PATCH /api/v1/expenses/{id}",
+		auth.Middleware(
+			http.HandlerFunc(r.expenseHandler.HandleEditExpense),
+		),
+	)
+
+	http.Handle(
+		"DELETE /api/v1/expenses/{id}",
+		auth.Middleware(
+			http.HandlerFunc(r.expenseHandler.HandleDeleteExpense),
+		),
+	)
+
 	// http.HandleFunc(
 	// 	"GET /api/v1/users",
 	// 	r.userHandler.GetUserByEmail,

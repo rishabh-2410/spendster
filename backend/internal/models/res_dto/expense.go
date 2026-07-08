@@ -2,7 +2,7 @@ package models
 
 import "time"
 
-type AddExpenseResponseDTO struct {
+type ExpenseResponseDTO struct {
 	ID            string
 	Title         string
 	Amount        float64
