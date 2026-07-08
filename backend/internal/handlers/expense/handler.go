@@ -120,3 +120,23 @@ func (eh *Handler) HandleDeleteExpense(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 }
+
+func (eh *Handler) HandleDashboardStats(w http.ResponseWriter, r *http.Request) {
+	userID, ok := requestcontext.GetUserID(r.Context())
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	stats, err := eh.expenseService.GetUserStats(userID)
+	if err != nil {
+		log.Printf("error fetching user stats: %v", err)
+		http.Error(w, "Unable to process request", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	json.NewEncoder(w).Encode(stats)
+}

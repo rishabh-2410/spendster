@@ -57,6 +57,13 @@ func (r *Router) RegisterRoutes() {
 		),
 	)
 
+	http.Handle(
+		"GET /api/v1/stats",
+		auth.Middleware(
+			http.HandlerFunc(r.expenseHandler.HandleDashboardStats),
+		),
+	)
+
 	// http.HandleFunc(
 	// 	"GET /api/v1/users",
 	// 	r.userHandler.GetUserByEmail,

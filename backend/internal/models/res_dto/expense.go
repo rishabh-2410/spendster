@@ -11,3 +11,9 @@ type ExpenseResponseDTO struct {
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 }
+
+type StatsResponseDTO struct {
+	TodaySpent    float64 `json:"today_spent"`
+	MonthlySpent  float64 `json:"monthly_spent"`
+	TotalExpenses int64   `json:"total_expenses"`
+}

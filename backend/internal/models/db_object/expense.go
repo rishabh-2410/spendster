@@ -12,3 +12,9 @@ type Expense struct {
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 }
+
+type ExpenseStats struct {
+	TodaySpent   float64
+	MonthSpent   float64
+	TotalExpense int64
+}

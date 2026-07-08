@@ -8,14 +8,16 @@ import (
 )
 
 type Service struct {
-	ExpenseRepo *repository.Expense
-	UserRepo    *repository.User
+	ExpenseRepo   *repository.Expense
+	UserRepo      *repository.User
+	DashboardRepo *repository.Dashboard
 }
 
-func New(userRepo *repository.User, expenseRepo *repository.Expense) *Service {
+func New(userRepo *repository.User, expenseRepo *repository.Expense, dashboardRepo *repository.Dashboard) *Service {
 	return &Service{
-		UserRepo:    userRepo,
-		ExpenseRepo: expenseRepo,
+		UserRepo:      userRepo,
+		ExpenseRepo:   expenseRepo,
+		DashboardRepo: dashboardRepo,
 	}
 }
 
@@ -73,4 +75,19 @@ func (es *Service) DeleteExpense(userID string, docID string) error {
 	}
 
 	return nil
+}
+
+func (es *Service) GetUserStats(userID string) (*resmodels.StatsResponseDTO, error) {
+	dashboardStats, err := es.DashboardRepo.GetStats(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	stats := &resmodels.StatsResponseDTO{
+		TodaySpent:    dashboardStats.TodaySpent,
+		MonthlySpent:  dashboardStats.MonthSpent,
+		TotalExpenses: dashboardStats.TotalExpense,
+	}
+
+	return stats, nil
 }

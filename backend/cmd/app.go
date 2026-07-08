@@ -31,9 +31,10 @@ func main() {
 	userRepository := repository.NewUserRepository(db)
 	tokenRepository := repository.NewTokenRepository(db)
 	expenseRepository := repository.NewExpenseRepository(db)
+	dashboardRepository := repository.NewDashboardRepository(db)
 
 	userservice := userservice.New(userRepository, tokenRepository)
-	expenseservice := expenseservice.New(userRepository, expenseRepository)
+	expenseservice := expenseservice.New(userRepository, expenseRepository, dashboardRepository)
 
 	userHandler := userhandler.New(userservice)
 	expenseHandler := expenseHandler.New(expenseservice)
