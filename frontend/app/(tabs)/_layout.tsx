@@ -1,8 +1,20 @@
-import { Tabs } from 'expo-router';
+import { userAuthStore } from '@/store/auth.store';
+import { Tabs, Redirect } from 'expo-router';
 import React from 'react';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+
 
 export default function TabLayout() {
+
+  const isSignedIn = userAuthStore((state) => state.isSignedIn)
+  const isLoading = userAuthStore((state) => state.isLoading)
+
+  if (isLoading) {
+    return null
+  }
+
+  if (!isSignedIn) {
+    return <Redirect href="/(auth)/login" />
+  }
 
   return (
     <Tabs

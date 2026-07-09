@@ -28,12 +28,14 @@ func (userHandler *Handler) HandleRegisterUser(w http.ResponseWriter,
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(&request); err != nil {
+		log.Printf("Error in request body %v", err)
 		http.Error(w, "Invalid Request", http.StatusBadRequest)
 		return
 	}
 
 	err := validation.Validate.Struct(request)
 	if err != nil {
+		log.Printf("Error in request body %v", err)
 		http.Error(w, "Invalid Request", http.StatusBadRequest)
 		return
 	}

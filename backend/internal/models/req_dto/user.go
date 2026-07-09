@@ -3,12 +3,12 @@ package models
 type RegisterUserRequestDTO struct {
 	Name     string `json:"name" validate:"required"`
 	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required,min=4,max=7"`
+	Password string `json:"password" validate:"required,min=8"`
 }
 
 type LoginUserRequestDTO struct {
 	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required"`
+	Password string `json:"password" validate:"required,min=8"`
 }
 
 type RefreshTokenRequestDTO struct {
