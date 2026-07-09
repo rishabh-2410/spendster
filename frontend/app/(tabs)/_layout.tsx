@@ -3,7 +3,6 @@ import React from 'react';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
 
   return (
     <Tabs
@@ -17,9 +16,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="expense"
         options={{
-          title: 'Explore',
+          title: 'Expense',
         }}
       />
     </Tabs>
