@@ -65,12 +65,14 @@ func (userHandler *Handler) HandleUserLogin(w http.ResponseWriter, r *http.Reque
 
 	err := validation.Validate.Struct(request)
 	if err != nil {
+		log.Printf("Error in request body %v", err)
 		http.Error(w, "Invalid Request", http.StatusBadRequest)
 		return
 	}
 
 	loggedUser, err := userHandler.userService.LoginUser(&request)
 	if err != nil {
+		log.Printf("Error in request body %v", err)
 		http.Error(w, "Invalid Credentials", http.StatusUnauthorized)
 		return
 	}
@@ -106,4 +108,32 @@ func (userHandler *Handler) HandleUserLogout(w http.ResponseWriter, r *http.Requ
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
+}
+
+func (userHandler *Handler) HandleTokenRefresh(w http.ResponseWriter, r *http.Request) {
+	var request *models.RefreshTokenRequestDTO
+
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+	err := decoder.Decode(&request)
+	if err != nil {
+		http.Error(w, "Invalid Request", http.StatusBadRequest)
+		return
+	}
+
+	if err = validation.Validate.Struct(request); err != nil {
+		http.Error(w, "Invalid Request", http.StatusBadRequest)
+		return
+	}
+
+	response, err := userHandler.userService.RefreshToken(request.RefreshToken)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	json.NewEncoder(w).Encode(response)
 }

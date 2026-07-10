@@ -12,6 +12,6 @@ export async function getRefreshToken() {
 }
 
 
-export async function deleteRefresToken() {
+export async function deleteRefreshToken() {
     return SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY)
 }

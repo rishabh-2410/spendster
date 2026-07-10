@@ -36,6 +36,11 @@ func (r *Router) RegisterRoutes() {
 		r.userHandler.HandleUserLogout,
 	)
 
+	http.HandleFunc(
+		"POST /api/v1/auth/refresh",
+		r.userHandler.HandleTokenRefresh,
+	)
+
 	http.Handle(
 		"POST /api/v1/expenses",
 		auth.Middleware(

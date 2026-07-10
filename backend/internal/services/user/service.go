@@ -102,3 +102,43 @@ func (us *Service) LogoutUser(refreshToken string) error {
 
 	return nil
 }
+
+func (us *Service) RefreshToken(existingrefreshToken string) (*resmodels.LoginUserResponseDTO, error) {
+	refreshTokenHash := auth.HashToken(existingrefreshToken)
+
+	userID, err := us.tokenRepo.MarkTokenExpired(refreshTokenHash)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := us.userRepo.FindById(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	accessToken, err := auth.GenerateAccessToken(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	newRefreshToken, err := auth.GenerateRefreshToken()
+	if err != nil {
+		return nil, err
+	}
+
+	hashedRefreshToken := auth.HashToken(newRefreshToken)
+
+	err = us.tokenRepo.SaveRefreshToken(userID, hashedRefreshToken)
+	if err != nil {
+		return nil, err
+	}
+
+	return &resmodels.LoginUserResponseDTO{
+		ID:           user.ID,
+		Name:         user.Name,
+		Email:        user.Email,
+		CreatedAt:    user.CreatedAt,
+		AccessToken:  accessToken,
+		RefreshToken: newRefreshToken,
+	}, nil
+}

@@ -43,3 +43,21 @@ func (tr *Token) SaveRefreshToken(userID string, refreshToken string) error {
 
 	return nil
 }
+
+func (tr *Token) MarkTokenExpired(refreshToken string) (string, error) {
+	var userID string
+	err := tr.db.QueryRow(`
+		UPDATE refresh_tokens 
+		SET revoked_at=NOW()
+		WHERE token_hash = $1
+			AND expires_at > NOW()
+  			AND revoked_at IS NULL
+		RETURNING user_id
+		`, refreshToken).Scan(&userID)
+
+	if err != nil {
+		return "", err
+	}
+
+	return userID, nil
+}

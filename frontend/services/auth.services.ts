@@ -1,15 +1,18 @@
 import {
   LoginRequest,
-  LoginResponse,
+  RefreshRequest,
   loginResponseSchema,
   RegisterRequest,
+  refreshRequestSchema,
 } from "@/schemas/auth.schema";
 
 
 const API_URL = "http://192.168.1.7:8080"
 
 export async function loginUser(request: LoginRequest) {
-    const response = await fetch(`${API_URL}/api/auth/v1/login`, {
+
+    console.log("Request for login:", request)
+    const response = await fetch(`${API_URL}/api/v1/auth/login`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -18,10 +21,13 @@ export async function loginUser(request: LoginRequest) {
     })
 
     if (!response.ok) {
+        console.log("Login failed code", response.status)
         throw new Error("Login failed")
     }
 
     const data: unknown = await response.json()
+
+    console.log("Login response data:", data)
 
     return loginResponseSchema.parse(data)
 }
@@ -43,4 +49,31 @@ export async function registerUser(request: RegisterRequest) {
         console.log(response.status)
         throw new Error("Unable to register user")
     }
+}
+
+
+export async function refreshUser(request: RefreshRequest) {
+    console.log("Refresh request", request)
+
+
+    const response = await fetch(
+           `${API_URL}/api/v1/auth/refresh`,{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(request)
+        }
+    )
+
+    if (!response.ok) {
+        console.log("refresh response code", response.status)
+        throw new Error("Please login again to continue")
+    }
+
+    const data: unknown = await response.json()
+
+    return loginResponseSchema.parse(data)
+
+
 }
