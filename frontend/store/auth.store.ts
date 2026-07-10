@@ -1,13 +1,5 @@
+import { AuthUser } from "@/types/auth.types";
 import { create } from "zustand";
-
-
-type AuthUser = {
-   id: string;
-   name: string;
-   email: string;
-   created_at: string;
-}
-
 
 type AuthState = {
     user: AuthUser | null;
@@ -25,7 +17,7 @@ type AuthState = {
 }
 
 
-export const userAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set) => ({
     user: null,
     accessToken: null,
 

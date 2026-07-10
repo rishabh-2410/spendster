@@ -1,12 +1,12 @@
-import { userAuthStore } from '@/store/auth.store';
+import { useAuthStore } from '@/store/auth.store';
 import { Tabs, Redirect } from 'expo-router';
 import React from 'react';
 
 
 export default function TabLayout() {
 
-  const isSignedIn = userAuthStore((state) => state.isSignedIn)
-  const isLoading = userAuthStore((state) => state.isLoading)
+  const isSignedIn = useAuthStore((state) => state.isSignedIn)
+  const isLoading = useAuthStore((state) => state.isLoading)
 
   if (isLoading) {
     return null

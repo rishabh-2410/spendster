@@ -1,14 +1,17 @@
 import { Redirect, Stack } from 'expo-router';
 
-import { userAuthStore } from '@/store/auth.store';
+import { useAuthStore } from '@/store/auth.store';
 
 
 export default function AuthLayout() {
 
-    const isSignedIn = userAuthStore((state) => state.isSignedIn)
-    const isLoading = userAuthStore((state) => state.isLoading)
+  const accessToken = useAuthStore(
+    (state) => state.accessToken
+  );
+    const isLoading = useAuthStore((state) => state.isLoading)
 
-
+  const isSignedIn = !!accessToken
+  
     if (isLoading) {
         return null;
     }

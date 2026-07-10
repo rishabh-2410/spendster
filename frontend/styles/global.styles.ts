@@ -25,22 +25,32 @@ export const registerStyles = StyleSheet.create({
   brand: {
     alignItems: "center",
   },
+    forgotPassword: {
+    fontSize: 12,
+    fontFamily: "sans-bold",
+    color: "#ea7a53",
+    
+  },
 
   logo: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    // width: 100,
+    // height: 100,
+    // borderRadius: 50,
 
-    alignItems: "center",
-    justifyContent: "center",
+    // alignItems: "center",
+    // justifyContent: "center",
 
-    backgroundColor: "#081126",
+    // backgroundColor: "#081126",
+    //     borderColor: 'red',
+    // borderWidth: 2,
+    // padding: 0
+
+
   },
 
   logoMark: {
-    fontSize: 24,
-    fontFamily: "sans-extrabold",
-    color: "#fff9e7",
+      width: 100,
+      height: 100
   },
 
   wordmark: {
@@ -52,7 +62,7 @@ export const registerStyles = StyleSheet.create({
   },
 
   title: {
-    marginTop: 16,
+    marginTop: 12,
 
     fontSize: 30,
     fontFamily: "sans-extrabold",
@@ -163,7 +173,7 @@ export const registerStyles = StyleSheet.create({
   },
 
   primaryButton: {
-    marginTop: 8,
+    marginTop: 28,
 
     minHeight: 64,
 

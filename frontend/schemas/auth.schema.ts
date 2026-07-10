@@ -1,16 +1,15 @@
 import {z} from "zod";
 
-export const loginRequestSchema = z.object({
-    email: z.email(),
-    password: z.string().min(8, "Password must be atleast 8 characters"),
-});
-
 export const registerRequestSchema = z.object({
     name: z.string(),
     email: z.email(),
     password: z.string().min(8, "Password must be atleast 8 characters")
 })
 
+export const loginRequestSchema = z.object({
+    email: z.email(),
+    password: z.string().min(8, "Password must be atleast 8 characters"),
+});
 
 export const loginResponseSchema = z.object({
     id: z.string(),
@@ -33,4 +32,10 @@ export type RegisterErrors = {
   email?: string;
   password?: string;
 };
+
+export type LoginErrors = {
+  email?: string;
+  password?: string;
+};
+
 

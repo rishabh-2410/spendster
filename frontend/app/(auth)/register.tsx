@@ -1,7 +1,7 @@
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link, router } from 'expo-router'
+import { router } from 'expo-router'
 import { Image } from 'expo-image'
 import { useRegister } from '@/hooks/mutations/use-register'
 import { RegisterErrors, registerRequestSchema } from '@/schemas/auth.schema'
@@ -68,11 +68,11 @@ export default function RegisterScreen() {
 
           <View style={styles.brand}>
             <View style={styles.logo}>
-              <Text style={styles.logoMark}>S</Text>
+              <Image  
+                style={styles.logoMark} 
+                source={require('@/assets/spendster.png')}  
+              />
             </View>
-
-            <Text style={styles.wordmark}>Spendster</Text>
-
             <Text style={styles.title}>Create account</Text>
 
             <Text style={styles.subtitle}>
@@ -150,9 +150,9 @@ export default function RegisterScreen() {
                 </Text>
               )}
 
-              <Text style={styles.helper}>
+              {/* <Text style={styles.helper}>
                 Use at least 8 characters.
-              </Text>
+              </Text> */}
 
             </View>
 

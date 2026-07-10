@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "spendwise",
-    "slug": "spendiwse",
+    "name": "spendster",
+    "slug": "spendster",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/spendwiseicon.png",
-    "scheme": "spendwise",
+    "icon": "./assets/spendster.png",
+    "scheme": "spendster",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
