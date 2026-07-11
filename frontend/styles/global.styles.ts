@@ -6,6 +6,17 @@ export const registerStyles = StyleSheet.create({
     backgroundColor: "#fff9e7",
   },
 
+  addButton: {
+    marginTop: 4,
+    width: 80,
+    height: 80,
+    justifyContent: "center",
+    alignItems: "center",
+    // borderColor: 'red',
+    // borderWidth: 2
+   
+  },
+
   screen: {
     flex: 1,
     backgroundColor: "#fff9e7",
@@ -25,11 +36,11 @@ export const registerStyles = StyleSheet.create({
   brand: {
     alignItems: "center",
   },
-    forgotPassword: {
+  forgotPassword: {
     fontSize: 12,
     fontFamily: "sans-bold",
     color: "#ea7a53",
-    
+
   },
 
   logo: {
@@ -49,8 +60,8 @@ export const registerStyles = StyleSheet.create({
   },
 
   logoMark: {
-      width: 100,
-      height: 100
+    width: 100,
+    height: 100
   },
 
   wordmark: {
@@ -122,7 +133,7 @@ export const registerStyles = StyleSheet.create({
     alignItems: "center",
 
     paddingHorizontal: 16,
-    
+
 
     borderRadius: 16,
 
