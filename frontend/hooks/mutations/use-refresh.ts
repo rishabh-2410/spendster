@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 
-import { refreshUser } from "@/services/auth.services";
+import { refreshUser } from "@/services/auth.service";
 
 export function useRefresh() {
     return useMutation({

@@ -104,7 +104,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="expense"
           options={{
-            tabBarIcon: () => (
+            tabBarIcon: ({color, focused}) => (
                 <Pressable
                 style={registerStyles.addButton}
                 onPress={() =>
@@ -112,8 +112,9 @@ export default function TabLayout() {
                 }
               >
                 <Ionicons
-                  name="add-circle"
+                  name="add-circle-outline"
                   size={32}
+                  color={color}
            
                 />
               </Pressable>

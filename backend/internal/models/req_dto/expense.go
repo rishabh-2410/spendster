@@ -3,10 +3,10 @@ package models
 import "time"
 
 type AddExpenseRequestDTO struct {
-	Title       string    `json:"title" validate:"required"`
-	Amount      float64   `json:"amount" validate:"required"`
-	Category    string    `json:"category" validate:"required"`
-	ExpenseDate time.Time `json:"expense_date" validate:"required"`
+	Title         string    `json:"title" validate:"required"`
+	Amount        float64   `json:"amount" validate:"required"`
+	Category      string    `json:"category" validate:"required"`
+	DateOfExpense time.Time `json:"date_of_expense" validate:"required"`
 }
 
 type EditExpenseRequestDTO struct {

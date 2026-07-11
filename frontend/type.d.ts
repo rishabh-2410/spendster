@@ -12,6 +12,12 @@ declare global {
         icon: ImageSourcePropType;
     }
 
+    interface Category {
+        label: string,
+        value: string,
+        emoji: string,
+    }
+
     // interface ExpenseProps{
 
     // }

@@ -1,4 +1,4 @@
-import { expensesResponseSchema } from "@/schemas/expense.schema";
+import { AddExpenseRequest, AddExpenseRequestObject, expenseSchema, expensesResponseSchema } from "@/schemas/expense.schema";
 import { useAuthStore } from "@/store/auth.store";
 
 const API_BASE_URL = "http://192.168.1.7:8080"
@@ -24,4 +24,31 @@ export async function fetchExpenses() {
 
     return expensesResponseSchema.parse(data)
 
+}
+
+
+export async function addExpense(request:AddExpenseRequestObject) {
+    const accessToken = useAuthStore.getState().accessToken
+
+    const response = await fetch(
+        `${API_BASE_URL}/api/v1/expenses`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${accessToken}`
+            },
+            body: JSON.stringify(request)
+        }
+    )
+
+    if (!response.ok) {
+        console.log("Adding expense error status", response.status)
+        throw new Error("Unable to add expense")
+    }
+
+    const data:unknown = await response.json()
+
+    console.log(data)
+
+    return expenseSchema.parse(data);
 }

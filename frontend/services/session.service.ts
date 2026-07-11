@@ -1,6 +1,6 @@
 import { useAuthStore } from "@/store/auth.store";
 import { deleteRefreshToken, getRefreshToken, saveRefreshToken } from "@/store/token.store";
-import { refreshUser } from "./auth.services";
+import { refreshUser } from "./auth.service";
 
   export async function restoreSession() {
 

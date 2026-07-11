@@ -85,7 +85,7 @@ export default function DashboardScreen() {
 
         <View style={styles.summaryCard}>
           <Text style={styles.summaryLabel}>
-            Total spent this month
+            Total expenses
           </Text>
 
           <Text style={styles.totalAmount}>{stats.total_expenses}</Text>

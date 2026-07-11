@@ -27,7 +27,7 @@ func (es *Service) AddExpense(userID string, req *reqmodels.AddExpenseRequestDTO
 		Title:         req.Title,
 		Amount:        req.Amount,
 		Category:      req.Category,
-		DateOfExpense: req.ExpenseDate,
+		DateOfExpense: req.DateOfExpense,
 	}
 
 	newExpense, err := es.ExpenseRepo.SaveExpense(expense)

@@ -3,13 +3,13 @@ package models
 import "time"
 
 type ExpenseResponseDTO struct {
-	ID            string
-	Title         string
-	Amount        float64
-	Category      string
-	DateOfExpense time.Time
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
+	ID            string    `json:"id"`
+	Title         string    `json:"title"`
+	Amount        float64   `json:"amount"`
+	Category      string    `json:"category"`
+	DateOfExpense time.Time `json:"date_of_expense"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
 }
 
 type StatsResponseDTO struct {

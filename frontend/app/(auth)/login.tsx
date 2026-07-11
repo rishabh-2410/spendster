@@ -20,7 +20,7 @@ import { useAuthStore } from "@/store/auth.store";
 import { AuthUser } from "@/types/auth.types";
 import { saveRefreshToken } from "@/store/token.store";
 import { useMutation } from "@tanstack/react-query";
-import { loginUser } from "@/services/auth.services";
+import { loginUser } from "@/services/auth.service";
 
 export default function LoginScreen() {
 
