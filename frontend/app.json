@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "spendster",
+    "name": "",
     "slug": "spendster",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/spendster.png",
+    "icon": "./assets/spendstericon.png",
     "scheme": "spendster",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -30,12 +30,12 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/spendstericon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#FFF9E7",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#FFF9E7"
           }
         }
       ],
