@@ -47,3 +47,10 @@ export type LoginErrors = {
 };
 
 
+
+
+export const logoutSchema = z.object({
+  refresh_token: z.string({error: "required token for logout"})
+})
+
+export type LogoutRequest = z.infer<typeof logoutSchema>

@@ -6,11 +6,18 @@ import { useAuthStore } from '@/store/auth.store'
 import { BottomSheetModal } from '@gorhom/bottom-sheet'
 import PrivacyPolicySheet from '@/components/settings/PrivacyPolicySheet'
 import AboutSheet from '@/components/settings/AboutSheet'
+import { getRefreshToken } from '@/store/token.store'
+import { router } from 'expo-router'
+import { useLogout } from '@/hooks/mutations/use-logout'
+import { LogoutRequest } from '@/schemas/auth.schema'
 
 const SettingsScreen = () => {
 
+  const clearSession = useAuthStore.getState().clearSession
   const privacyPolicySheet =useRef<BottomSheetModal>(null);
   const aboutSheet =useRef<BottomSheetModal>(null);
+
+  const logoutMutation = useLogout()
   
   function handlePrivacySettings() {
     privacyPolicySheet.current?.present()
@@ -22,6 +29,29 @@ const SettingsScreen = () => {
 
   function handleAbout() {
     aboutSheet.current?.present()
+  }
+
+  async function handleLogout() {
+    const token = await getRefreshToken()
+
+    if (!token) {
+      console.log("no refresh token found")
+      return 
+    }
+    const request:LogoutRequest = {
+      refresh_token: token
+    }
+
+
+    logoutMutation.mutate(request, {
+      onSuccess: () => {
+        clearSession()
+        router.replace("/(auth)/login")
+      },
+      onError: (error:any) => {
+        console.log("error in logging out", error)
+      }
+    })
   }
 
 
@@ -80,13 +110,17 @@ const SettingsScreen = () => {
       </Pressable>
     )}
     ListFooterComponent={
-      <Pressable style={styles.logoutButton}>
+      <Pressable
+        onPress={handleLogout} 
+        style={({pressed}) => [
+          styles.logoutButton,
+          pressed ? {opacity: 0.45} : null
+      ]}>
         <Ionicons
           name="log-out-outline"
           size={22}
           color="#081126"
         />
-
         <Text style={styles.logoutText}>
           Log Out
         </Text>

@@ -4,7 +4,10 @@ import {
   loginResponseSchema,
   RegisterRequest,
   refreshRequestSchema,
+  LogoutRequest,
 } from "@/schemas/auth.schema";
+import { useAuthStore } from "@/store/auth.store";
+import { endsWith } from "zod";
 
 
 const API_URL = "http://192.168.1.7:8080"
@@ -76,4 +79,26 @@ export async function refreshUser(request: RefreshRequest) {
     return loginResponseSchema.parse(data)
 
 
+}
+
+
+export async function logoutUser(request: LogoutRequest) {
+    const accessToken = useAuthStore.getState().accessToken
+
+    const response = await fetch(
+        `${API_URL}/api/v1/auth/logout`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${accessToken}`
+            },
+            body: JSON.stringify(request)
+        }
+    )
+
+    if(!response.ok) {
+        console.log("erro whiel logging out status", response.status)
+        throw new Error("Unable to logout")
+    }
 }
