@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "",
+    "name": "spendster",
     "slug": "spendster",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.rishabh.spendster"
     },
     "android": {
       "adaptiveIcon": {
@@ -46,6 +47,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "12dfc8a0-0844-4377-9b04-7df00fa3bb18"
+      }
     }
   }
 }
