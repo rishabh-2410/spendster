@@ -1,4 +1,4 @@
-import { AddExpenseRequest, AddExpenseRequestObject, expenseSchema, expensesResponseSchema } from "@/schemas/expense.schema";
+import { AddExpenseRequest, AddExpenseRequestObject, EditExpenseMutationRequest, EditExpenseRequest, expenseSchema, expensesResponseSchema } from "@/schemas/expense.schema";
 import { useAuthStore } from "@/store/auth.store";
 
 const API_BASE_URL = "http://192.168.1.7:8080"
@@ -21,6 +21,8 @@ export async function fetchExpenses() {
     }
 
     const data:unknown = await response.json();
+
+
 
     return expensesResponseSchema.parse(data)
 
@@ -71,3 +73,34 @@ export async function deleteExpense(expenseID: string) {
         throw new Error("Unable to delete expense")
     }
 } 
+
+
+
+export async function editExpense( editRequest: EditExpenseMutationRequest) {
+
+    const accessToken = useAuthStore.getState().accessToken
+
+    console.log("edit request payload:", editRequest)
+
+    const response = await fetch(
+        `${API_BASE_URL}/api/v1/expenses/${editRequest.expenseID}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${accessToken}`
+            },
+            body: JSON.stringify(editRequest.editRequest)
+        }
+    )
+
+    if (!response.ok) {
+        console.log("edit expense error status", response.status)
+        throw new Error("Unable to edit expense")
+    }
+
+    const data:unknown = await response.json()
+
+    return expenseSchema.parse(data)
+
+
+}

@@ -21,7 +21,7 @@ export default function TabLayout() {
     (state) => state.isLoading
   );
 
-  const bottomSheetRef =
+  const addBottomSheetRef =
     useRef<BottomSheetModal>(null);
 
   if (isLoading) {
@@ -108,7 +108,7 @@ export default function TabLayout() {
                 <Pressable
                 style={registerStyles.addButton}
                 onPress={() =>
-                  bottomSheetRef.current?.present()
+                  addBottomSheetRef.current?.present()
                 }
               >
                 <Ionicons
@@ -140,7 +140,7 @@ export default function TabLayout() {
         />
       </Tabs>
 
-      <AddExpenseSheet ref={bottomSheetRef} />
+      <AddExpenseSheet ref={addBottomSheetRef} />
     </>
   );
 }

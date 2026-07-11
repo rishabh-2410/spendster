@@ -12,28 +12,30 @@ import { Image } from "expo-image";
 import { useExpenses } from "@/hooks/query/use-expenses";
 import { useStats } from "@/hooks/query/use-stats";
 import { useAuthStore } from "@/store/auth.store";
-import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import { useDeleteExpense } from "@/hooks/mutations/use-delete-expense";
 import { queryClient } from "@/lib/query-client";
+import React, { useRef, useState } from "react";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { EditExpenseSheet } from "@/components/expense/EditExpenseSheet";
+import { Expense } from "@/schemas/expense.schema";
+import ReanimatedSwipeable, { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
 
-type Expense = {
-  id: string;
-  title: string;
-  category: string;
-  amount: number;
-  date_of_expense: string;
-};
 
 
 export default function DashboardScreen() {
 
   const user = useAuthStore((state) => state.user)
+  const [selectedExpense, setSelectedExpense] =useState<Expense | null>(null);
   
 
   const expenseQuery = useExpenses();
   const statsQuery = useStats();
 
-  const deleteMutation = useDeleteExpense()
+  const deleteMutation = useDeleteExpense();
+  const editBottomsheet =useRef<BottomSheetModal>(null);
+
+ const openedSwipeableRef = useRef<SwipeableMethods | null>(null);
+
 
 
   if (
@@ -58,8 +60,9 @@ export default function DashboardScreen() {
   const expenses = expenseQuery.data;
   const stats = statsQuery.data;
 
-  async function handleEdit(expenseId: string) {
-
+  async function handleEdit(expense: Expense) {  
+    setSelectedExpense(expense)
+     editBottomsheet.current?.present()
   }
 
   async function handleDelete(expenseId: string) {
@@ -82,7 +85,11 @@ export default function DashboardScreen() {
 
   }
 
-  const renderRightActions = (id: string) => (
+  const handleEditSuccess = (expenseId: string) => {
+    openedSwipeableRef.current?.close();
+};
+
+  const renderRightActions = (item:Expense) => (
     <View
         style={{
             flexDirection: "row",
@@ -91,7 +98,7 @@ export default function DashboardScreen() {
     >
         <Pressable
             style={styles.editButton}
-            onPress={() => handleEdit(id)}
+            onPress={() => handleEdit(item)}
         >
             <MaterialIcons
                 name="mode-edit-outline"
@@ -102,7 +109,7 @@ export default function DashboardScreen() {
 
         <Pressable
             style={styles.deleteButton}
-            onPress={() => handleDelete(id)}
+            onPress={() => handleDelete(item.id)}
         >
             <Ionicons
                 name="trash-outline"
@@ -216,9 +223,14 @@ export default function DashboardScreen() {
   };
 
   const renderExpense = ({ item }: { item: Expense }) => {
+    const rowRef = React.createRef<SwipeableMethods>();
     return (
-      <Swipeable 
-        renderRightActions={() => renderRightActions(item.id)}
+      <ReanimatedSwipeable 
+        renderRightActions={() => renderRightActions(item)}
+        ref={rowRef}
+        onSwipeableOpen={() => {
+          openedSwipeableRef.current = rowRef.current;
+        }}
       >
         <Pressable style={styles.expenseItem}>
           <View style={styles.categoryIcon}>
@@ -243,11 +255,14 @@ export default function DashboardScreen() {
             </Text>
 
             <Text style={styles.expenseDate}>
-              {item.date_of_expense}
+              {new Date(item.date_of_expense).toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "short"
+              })}
             </Text>
           </View>
         </Pressable>
-      </Swipeable>
+      </ReanimatedSwipeable>
     );
   };
 
@@ -262,6 +277,12 @@ export default function DashboardScreen() {
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         showsVerticalScrollIndicator={false}
       />
+
+      <EditExpenseSheet
+        ref={editBottomsheet}
+        expense={selectedExpense}
+        onSuccess={handleEditSuccess}
+        />
     </SafeAreaView>
   );
 }

@@ -8,12 +8,22 @@ export const expenseSchema = z.object({
   date_of_expense: z.string(),
   created_at: z.string(),
   updated_at: z.string(),
-
 });
 
 
 
 
+
+export const editExpenseScheme = z.object({
+  amount:  z.number().optional(),
+  category: z.string().optional(),
+})
+export type EditExpenseRequest = z.infer<typeof editExpenseScheme>
+
+export type EditExpenseMutationRequest = {
+  expenseID: string;
+  editRequest: EditExpenseRequest;
+};
 
 export const addExpenseSchema = z.object({
   title: z
@@ -37,6 +47,7 @@ export type AddExpenseRequest = z.infer<
   typeof addExpenseSchema
 >;
 
+
 export const expensesResponseSchema = z.array(expenseSchema);
 
 export type Expense = z.infer<typeof expenseSchema>;
@@ -47,4 +58,6 @@ export type AddExpenseRequestObject = {
   category: string,
   date_of_expense: string,
 }
+
+
 

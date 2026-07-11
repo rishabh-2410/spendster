@@ -11,7 +11,7 @@ type AddExpenseRequestDTO struct {
 
 type EditExpenseRequestDTO struct {
 	Amount   *float64 `json:"amount" validate:"omitempty,gt=0"`
-	Category *string  `json:"category" validate:"gt=3"`
+	Category *string  `json:"category" validate:"omitempty,gt=3"`
 }
 
 type EditExpense struct {
