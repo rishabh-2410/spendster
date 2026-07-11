@@ -102,18 +102,21 @@ func (eh *Handler) HandleEditExpense(w http.ResponseWriter, r *http.Request) {
 func (eh *Handler) HandleDeleteExpense(w http.ResponseWriter, r *http.Request) {
 	docID := r.PathValue("id")
 	if docID == "" {
+		log.Print("expense delete request, error 1")
 		http.Error(w, "expense id is required", http.StatusBadRequest)
 		return
 	}
 
 	userID, ok := requestcontext.GetUserID(r.Context())
 	if !ok {
+		log.Print("expense delete request, error 2")
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
 	err := eh.expenseService.DeleteExpense(userID, docID)
 	if err != nil {
+		log.Printf("expense delete request, error 3 %v", err)
 		http.Error(w, "Unable to delete expense", http.StatusInternalServerError)
 		return
 	}

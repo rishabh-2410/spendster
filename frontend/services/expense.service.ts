@@ -52,3 +52,22 @@ export async function addExpense(request:AddExpenseRequestObject) {
 
     return expenseSchema.parse(data);
 }
+
+
+export async function deleteExpense(expenseID: string) {
+    const access_token = useAuthStore.getState().accessToken
+
+    const response = await fetch(
+        `${API_BASE_URL}/api/v1/expenses/${expenseID}`,{
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${access_token}`
+            }
+        }
+    )
+
+    if (!response.ok) {
+        console.log("delete expense error status", response.status)
+        throw new Error("Unable to delete expense")
+    }
+} 

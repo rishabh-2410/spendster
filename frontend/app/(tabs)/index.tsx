@@ -7,11 +7,14 @@ import {
 } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useExpenses } from "@/hooks/query/use-expenses";
 import { useStats } from "@/hooks/query/use-stats";
 import { useAuthStore } from "@/store/auth.store";
+import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
+import { useDeleteExpense } from "@/hooks/mutations/use-delete-expense";
+import { queryClient } from "@/lib/query-client";
 
 type Expense = {
   id: string;
@@ -21,33 +24,27 @@ type Expense = {
   date_of_expense: string;
 };
 
-const expenses: Expense[] = [
-  {
-    id: "1",
-    title: "Zomato",
-    category: "Food",
-    amount: 540,
-    date_of_expense: "Today",
-  },
-];
 
 export default function DashboardScreen() {
 
   const user = useAuthStore((state) => state.user)
+  
 
   const expenseQuery = useExpenses();
   const statsQuery = useStats();
 
+  const deleteMutation = useDeleteExpense()
+
 
   if (
-    expenseQuery.isPaused || 
+    expenseQuery.isPaused ||
     statsQuery.isPending
   ) {
     return null;
   }
 
 
-   if (
+  if (
     expenseQuery.isError ||
     statsQuery.isError
   ) {
@@ -60,6 +57,61 @@ export default function DashboardScreen() {
 
   const expenses = expenseQuery.data;
   const stats = statsQuery.data;
+
+  async function handleEdit(expenseId: string) {
+
+  }
+
+  async function handleDelete(expenseId: string) {
+    if (user !== null) {
+      deleteMutation.mutate(expenseId, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: ["expenses"]
+          })
+
+          queryClient.invalidateQueries({
+            queryKey: ["stats"]
+          })
+        },
+        onError: (error) => {
+          console.log("error in delete mutation:", error)
+        }
+      })
+    }
+
+  }
+
+  const renderRightActions = (id: string) => (
+    <View
+        style={{
+            flexDirection: "row",
+            alignItems: "center",
+        }}
+    >
+        <Pressable
+            style={styles.editButton}
+            onPress={() => handleEdit(id)}
+        >
+            <MaterialIcons
+                name="mode-edit-outline"
+                size={20}
+                color="#fff"
+            />
+        </Pressable>
+
+        <Pressable
+            style={styles.deleteButton}
+            onPress={() => handleDelete(id)}
+        >
+            <Ionicons
+                name="trash-outline"
+                size={20}
+                color="#fff"
+            />
+        </Pressable>
+    </View>
+);
 
   const renderHeader = () => {
     return (
@@ -165,33 +217,37 @@ export default function DashboardScreen() {
 
   const renderExpense = ({ item }: { item: Expense }) => {
     return (
-      <Pressable style={styles.expenseItem}>
-        <View style={styles.categoryIcon}>
-          <Ionicons
-            name="fast-food-outline"
-            size={22}
-            color="#081126"
-          />
-        </View>
+      <Swipeable 
+        renderRightActions={() => renderRightActions(item.id)}
+      >
+        <Pressable style={styles.expenseItem}>
+          <View style={styles.categoryIcon}>
+            <Ionicons
+              name="fast-food-outline"
+              size={22}
+              color="#081126"
+            />
+          </View>
 
-        <View style={styles.expenseInfo}>
-          <Text style={styles.expenseTitle}>{item.title}</Text>
+          <View style={styles.expenseInfo}>
+            <Text style={styles.expenseTitle}>{item.title}</Text>
 
-          <Text style={styles.expenseCategory}>
-            {item.category}
-          </Text>
-        </View>
+            <Text style={styles.expenseCategory}>
+              {item.category}
+            </Text>
+          </View>
 
-        <View style={styles.expenseMeta}>
-          <Text style={styles.expenseAmount}>
-            ₹{item.amount}
-          </Text>
+          <View style={styles.expenseMeta}>
+            <Text style={styles.expenseAmount}>
+              ₹{item.amount}
+            </Text>
 
-          <Text style={styles.expenseDate}>
-            {item.date_of_expense}
-          </Text>
-        </View>
-      </Pressable>
+            <Text style={styles.expenseDate}>
+              {item.date_of_expense}
+            </Text>
+          </View>
+        </Pressable>
+      </Swipeable>
     );
   };
 
@@ -403,6 +459,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(0, 0, 0, 0.08)",
     backgroundColor: "#faf4de",
+    marginRight: 4
   },
 
   categoryIcon: {
@@ -453,4 +510,31 @@ const styles = StyleSheet.create({
   separator: {
     height: 8,
   },
+  editButton: {
+    width: 40,
+    height: 40,
+
+    justifyContent: "center",
+
+    alignItems: "center",
+
+    backgroundColor: "#EA7A53",
+
+    borderRadius: 18,
+},
+
+deleteButton: {
+    width: 40,
+    height: 40,
+
+    justifyContent: "center",
+
+    alignItems: "center",
+
+    backgroundColor: "#DC2626",
+
+    borderRadius: 18,
+
+    marginLeft: 8,
+},
 });
