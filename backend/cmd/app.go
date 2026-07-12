@@ -17,10 +17,10 @@ import (
 
 func main() {
 
-	PORT := os.Getenv("PORT")
+	port := os.Getenv("PORT")
 
-	if PORT == "" {
-		PORT = "8080" // Local development
+	if port == "" {
+		port = "8080" // Local development
 	}
 
 	// Initialize validation instance
@@ -52,6 +52,6 @@ func main() {
 
 	log.Println("Server listening on :8080")
 
-	log.Fatal(http.ListenAndServe(":"+PORT, nil))
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 
 }
