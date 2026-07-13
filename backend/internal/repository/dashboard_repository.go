@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"expense-backend/internal/logging"
 	dbmodels "expense-backend/internal/models/db_object"
 )
 
@@ -16,6 +17,7 @@ func NewDashboardRepository(db *sql.DB) *Dashboard {
 }
 
 func (d *Dashboard) GetStats(userID string) (*dbmodels.ExpenseStats, error) {
+	logging.Debug("dashboard repository get stats user_id=%s", userID)
 	stats := &dbmodels.ExpenseStats{}
 
 	err := d.db.QueryRow(
@@ -54,7 +56,10 @@ WHERE user_id=$1
 	)
 
 	if err != nil {
+		logging.Error("dashboard repository get stats failed user_id=%s err=%v", userID, err)
 		return nil, err
 	}
+
+	logging.Info("dashboard repository get stats success user_id=%s total_expenses=%d", userID, stats.TotalExpense)
 	return stats, nil
 }

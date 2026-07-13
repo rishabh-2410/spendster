@@ -3,14 +3,12 @@ import {
   RefreshRequest,
   loginResponseSchema,
   RegisterRequest,
-  refreshRequestSchema,
   LogoutRequest,
 } from "@/schemas/auth.schema";
 import { useAuthStore } from "@/store/auth.store";
-import { endsWith } from "zod";
+import { API_URL } from "@/utils/helper";
 
 
-const API_URL = "http://192.168.1.7:8080"
 
 export async function loginUser(request: LoginRequest) {
 

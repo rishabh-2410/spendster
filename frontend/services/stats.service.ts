@@ -2,8 +2,8 @@
 
 import { useAuthStore } from "@/store/auth.store";
 import { statsResponseSchema } from "@/schemas/stats.schema";
+import { API_URL } from "@/utils/helper";
 
-const API_URL = "http://192.168.1.7:8080"
 
 export async function fetchStats() {
   const accessToken =

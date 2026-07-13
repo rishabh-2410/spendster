@@ -1,13 +1,13 @@
 import { AddExpenseRequest, AddExpenseRequestObject, EditExpenseMutationRequest, EditExpenseRequest, expenseSchema, expensesResponseSchema } from "@/schemas/expense.schema";
 import { useAuthStore } from "@/store/auth.store";
+import { API_URL } from "@/utils/helper";
 
-const API_BASE_URL = "http://192.168.1.7:8080"
 
 export async function fetchExpenses() {
     const accessToken = useAuthStore.getState().accessToken;
 
     const response = await fetch(
-        `${API_BASE_URL}/api/v1/expenses`,{
+        `${API_URL}/api/v1/expenses`,{
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -33,7 +33,7 @@ export async function addExpense(request:AddExpenseRequestObject) {
     const accessToken = useAuthStore.getState().accessToken
 
     const response = await fetch(
-        `${API_BASE_URL}/api/v1/expenses`, {
+        `${API_URL}/api/v1/expenses`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -60,7 +60,7 @@ export async function deleteExpense(expenseID: string) {
     const access_token = useAuthStore.getState().accessToken
 
     const response = await fetch(
-        `${API_BASE_URL}/api/v1/expenses/${expenseID}`,{
+        `${API_URL}/api/v1/expenses/${expenseID}`,{
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${access_token}`
@@ -83,7 +83,7 @@ export async function editExpense( editRequest: EditExpenseMutationRequest) {
     console.log("edit request payload:", editRequest)
 
     const response = await fetch(
-        `${API_BASE_URL}/api/v1/expenses/${editRequest.expenseID}`, {
+        `${API_URL}/api/v1/expenses/${editRequest.expenseID}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",

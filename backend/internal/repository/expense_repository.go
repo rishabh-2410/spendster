@@ -3,9 +3,9 @@ package repository
 import (
 	"database/sql"
 	"errors"
+	"expense-backend/internal/logging"
 	dbmodels "expense-backend/internal/models/db_object"
 	reqmodels "expense-backend/internal/models/req_dto"
-	"log"
 )
 
 type Expense struct {
@@ -19,6 +19,7 @@ func NewExpenseRepository(db *sql.DB) *Expense {
 }
 
 func (er *Expense) SaveExpense(expense *dbmodels.Expense) (*dbmodels.Expense, error) {
+	logging.Debug("expense repository save expense user_id=%s title=%s amount=%.2f category=%s", expense.UserID, expense.Title, expense.Amount, expense.Category)
 	newExpense := &dbmodels.Expense{}
 
 	err := er.db.QueryRow(`
@@ -63,8 +64,11 @@ func (er *Expense) SaveExpense(expense *dbmodels.Expense) (*dbmodels.Expense, er
 	)
 
 	if err != nil {
+		logging.Error("expense repository save expense failed user_id=%s title=%s err=%v", expense.UserID, expense.Title, err)
 		return nil, err
 	}
+
+	logging.Info("expense repository save expense success user_id=%s expense_id=%s", expense.UserID, newExpense.ID)
 
 	return newExpense, nil
 
@@ -72,7 +76,7 @@ func (er *Expense) SaveExpense(expense *dbmodels.Expense) (*dbmodels.Expense, er
 
 func (er *Expense) UpdateExpense(docID string, userID string, updateDetails *reqmodels.EditExpenseRequestDTO) (*dbmodels.Expense, error) {
 	updatedExpense := &dbmodels.Expense{}
-	log.Printf("Updated expense db object: %v", updatedExpense)
+	logging.Debug("expense repository update expense user_id=%s expense_id=%s amount=%v category=%v", userID, docID, updateDetails.Amount, updateDetails.Category)
 
 	err := er.db.QueryRow(`
 		UPDATE expenses
@@ -92,13 +96,17 @@ func (er *Expense) UpdateExpense(docID string, userID string, updateDetails *req
 		&updatedExpense.UpdatedAt,
 	)
 	if err != nil {
+		logging.Error("expense repository update expense failed user_id=%s expense_id=%s err=%v", userID, docID, err)
 		return nil, err
 	}
+
+	logging.Info("expense repository update expense success user_id=%s expense_id=%s", userID, updatedExpense.ID)
 
 	return updatedExpense, nil
 }
 
 func (er *Expense) DeleteExpense(docID string, userID string) error {
+	logging.Debug("expense repository delete expense user_id=%s expense_id=%s", userID, docID)
 	result, err := er.db.Exec(
 		`
 		DELETE FROM expenses
@@ -106,22 +114,28 @@ func (er *Expense) DeleteExpense(docID string, userID string) error {
 		`, docID, userID)
 
 	if err != nil {
+		logging.Error("expense repository delete expense failed user_id=%s expense_id=%s err=%v", userID, docID, err)
 		return err
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
+		logging.Error("expense repository delete expense rows failed user_id=%s expense_id=%s err=%v", userID, docID, err)
 		return err
 	}
 
 	if rowsAffected == 0 {
+		logging.Error("expense repository delete expense no rows affected user_id=%s expense_id=%s", userID, docID)
 		return errors.New("expense already deleted or not found")
 	}
+
+	logging.Info("expense repository delete expense success user_id=%s expense_id=%s", userID, docID)
 
 	return nil
 }
 
 func (er *Expense) FetchExpenses(userID string) ([]dbmodels.Expense, error) {
+	logging.Debug("expense repository fetch expenses user_id=%s", userID)
 	expenses := make([]dbmodels.Expense, 0)
 
 	rows, err := er.db.Query(`
@@ -140,6 +154,7 @@ func (er *Expense) FetchExpenses(userID string) ([]dbmodels.Expense, error) {
 	`, userID)
 
 	if err != nil {
+		logging.Error("expense repository fetch expenses query failed user_id=%s err=%v", userID, err)
 		return nil, err
 	}
 
@@ -160,6 +175,7 @@ func (er *Expense) FetchExpenses(userID string) ([]dbmodels.Expense, error) {
 		)
 
 		if err != nil {
+			logging.Error("expense repository fetch expenses scan failed user_id=%s err=%v", userID, err)
 			return nil, err
 		}
 
@@ -167,8 +183,11 @@ func (er *Expense) FetchExpenses(userID string) ([]dbmodels.Expense, error) {
 	}
 
 	if err := rows.Err(); err != nil {
+		logging.Error("expense repository fetch expenses rows failed user_id=%s err=%v", userID, err)
 		return nil, err
 	}
+
+	logging.Info("expense repository fetch expenses success user_id=%s count=%d", userID, len(expenses))
 
 	return expenses, nil
 

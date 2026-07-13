@@ -4,6 +4,7 @@ import (
 	"expense-backend/internal/auth"
 	expense "expense-backend/internal/handlers/expense"
 	user "expense-backend/internal/handlers/user"
+	"expense-backend/internal/logging"
 	"net/http"
 )
 
@@ -20,6 +21,7 @@ func NewRouter(userHandler *user.Handler, expenseHandler *expense.Handler) *Rout
 }
 
 func (r *Router) RegisterRoutes() {
+	logging.Info("registering HTTP routes")
 
 	http.HandleFunc(
 		"POST /api/v1/auth/register",
@@ -75,6 +77,8 @@ func (r *Router) RegisterRoutes() {
 			http.HandlerFunc(r.expenseHandler.HandleGetExpenses),
 		),
 	)
+
+	logging.Info("HTTP routes registered")
 
 	// http.HandleFunc(
 	// 	"GET /api/v1/users",
