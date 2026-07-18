@@ -75,14 +75,21 @@ This repository documents the design, architecture, and development process to p
 
 ## 4. Screenshots
 
-Replace these placeholders with exported app images or device frames:
+<!-- ![LoginScreen](frontend/assets/screenshots/login.png)
+![RegisterScreen](frontend/assets/screenshots/register.png)
+![Dashboard](frontend/assets/screenshots/home.png)
+![AddExpense](frontend/assets/screenshots/add-expense.png)
+![ExpenseDetail](frontend/assets/screenshots/expense-details.png)
+![SettingsScreen](frontend/assets/screenshots/settings.png) -->
 
-![LoginScreen](assets/screenshots/login.png)
-![RegisterScreen](assets/screenshots/register.png)
-![Dashboard](assets/screenshots/home.png)
-![AddExpense](assets/screenshots/add-expense.png)
-![ExpenseDetail](assets/screenshots/expense-details.png)
-![SettingsScreen](assets/screenshots/settings.png)
+<p align="auto">
+  <img src="frontend/assets/screenshots/login.png" width="220" />
+  <img src="frontend/assets/screenshots/home.png" width="220" />
+  <img src="frontend/assets/screenshots/add-expense.png" width="220" />
+  <img src="frontend/assets/screenshots/edit-expense.png" width="220" />
+  <img src="frontend/assets/screenshots/expense-details.png" width="220" />
+  <img src="frontend/assets/screenshots/settings.png" width="220" />
+</p>
 
 ## 5. Architecture
 
