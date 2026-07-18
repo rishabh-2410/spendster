@@ -77,12 +77,12 @@ This repository documents the design, architecture, and development process to p
 
 Replace these placeholders with exported app images or device frames:
 
-- [Login Screen Screenshot]
-- [Register Screen Screenshot]
-- [Dashboard Screenshot]
-- [Add Expense Bottom Sheet Screenshot]
-- [Expense Detail Screenshot]
-- [Settings Screen Screenshot]
+![LoginScreen](assets/screenshots/login.png)
+![RegisterScreen](assets/screenshots/register.png)
+![Dashboard](assets/screenshots/home.png)
+![AddExpense](assets/screenshots/add-expense.png)
+![ExpenseDetail](assets/screenshots/expense-details.png)
+![SettingsScreen](assets/screenshots/settings.png)
 
 ## 5. Architecture
 
