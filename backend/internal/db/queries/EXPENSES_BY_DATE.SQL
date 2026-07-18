@@ -1,4 +1,0 @@
-SELECT * FROM expenses
-WHERE user_id='5122613a-4814-4349-9c6f-888261c202e5'
-AND date_of_expense BETWEEN '2026-05-21 23:59:59+00:00' AND '2026-06-21 23:59:59+00:00'
-ORDER BY date_of_expense DESC;

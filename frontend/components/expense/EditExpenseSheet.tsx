@@ -134,15 +134,8 @@ export const EditExpenseSheet = forwardRef<BottomSheetModal, Props>(
         editRequest: editReqDyanmicPayload
       }
       editExpenseMutation.mutate(editRequest, {
-        onSuccess: () => {
-
-          queryClient.invalidateQueries({
-            queryKey: ["expenses"]
-          })
-          queryClient.invalidateQueries({
-            queryKey: ["stats"]
-          })
-
+        onSuccess: async(updatedExpense, editedExpense, context) => {
+          queryClient.setQueryData<Expense[]>(["expenses"], (old=[]) => old.map((item) => item.id === context?.editedExpense?.id ? updatedExpense : item))
           onSuccess();
           reset();
           (

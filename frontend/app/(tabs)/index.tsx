@@ -54,7 +54,6 @@ export default function DashboardScreen() {
   )
   }
 
-
   if (
     expenseQuery.isError ||
     statsQuery.isError
@@ -130,7 +129,7 @@ export default function DashboardScreen() {
               style={styles.avatar}
             />
 
-            <Text style={styles.greeting}>Hi {user?.name} 👋</Text>
+            <Text style={styles.greeting}>Hola {user ? user?.name?.charAt(0)?.toUpperCase() + user?.name?.slice(1) : "Guest"} 👋</Text>
           </View>
 
           <Pressable style={styles.headerAction}>

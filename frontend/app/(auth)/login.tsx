@@ -66,7 +66,14 @@ export default function LoginScreen() {
         router.navigate("/")
       },
       onError: (error) => {
-        console.log(error)
+        console.log("Login mutation failed")
+        console.log("Login mutation error object:", error)
+
+        if (error instanceof Error) {
+          console.log("Login mutation error name:", error.name)
+          console.log("Login mutation error message:", error.message)
+          console.log("Login mutation error stack:", error.stack)
+        }
       }
     })
 

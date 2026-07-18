@@ -43,6 +43,17 @@ export function useDeleteExpense() {
                     today_spent: previousStats.today_spent - (isSameDay ? deletedExpense.amount : 0)
                 })
             }
+
+            return {previousExpenses, previousStats, deletedExpense}
+        },
+        onError: (error, deletedExpense, context) => {
+            queryClient.setQueryData<Expense[]>(["expenses"], context?.previousExpenses)
+            queryClient.setQueryData<StatsResponse>(["stats"], context?.previousStats)
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ["expenses"] })
+            queryClient.invalidateQueries({ queryKey: ["stats"] })
+
         }
     })
 }

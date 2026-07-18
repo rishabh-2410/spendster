@@ -9,6 +9,8 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { getRefreshToken } from '@/store/token.store'
 import { useLogout } from '@/hooks/mutations/use-logout'
 import { LogoutRequest } from '@/schemas/auth.schema'
+import PrivacyPolicySheet from '@/components/settings/PrivacyPolicySheet'
+import AboutSheet from '@/components/settings/AboutSheet'
 
 const SettingsScreen = () => {
 
@@ -71,7 +73,7 @@ const SettingsScreen = () => {
         <View style={styles.profileCard}>
 
           <Text style={styles.name}>
-            {user ? user.name : "Unnamed user"}
+            {user ? user?.name?.charAt(0)?.toUpperCase() + user?.name?.slice(1) : "Unnamed user"}
           </Text>
 
           <Text style={styles.email}>
@@ -130,8 +132,8 @@ const SettingsScreen = () => {
     }}
   />
 
-  {/* <PrivacyPolicySheet ref={privacyPolicySheet} />
-  <AboutSheet ref={aboutSheet} /> */}
+  <PrivacyPolicySheet ref={privacyPolicySheet} />
+  <AboutSheet ref={aboutSheet} />
 </SafeAreaView>
   )
 }

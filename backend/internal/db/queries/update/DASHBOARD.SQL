@@ -33,4 +33,4 @@ SELECT
     COUNT(*) AS total_expenses
 
 FROM expenses
-WHERE user_id = '0f2268e7-bc17-4814-a458-0dfd66967ce2'
+WHERE user_id = ?
