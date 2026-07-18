@@ -4,10 +4,9 @@ import { Ionicons } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useAuthStore } from '@/store/auth.store'
 import { BottomSheetModal } from '@gorhom/bottom-sheet'
-import PrivacyPolicySheet from '@/components/settings/PrivacyPolicySheet'
-import AboutSheet from '@/components/settings/AboutSheet'
+// import PrivacyPolicySheet from '@/components/settings/PrivacyPolicySheet'
+// import AboutSheet from '@/components/settings/AboutSheet'
 import { getRefreshToken } from '@/store/token.store'
-import { router } from 'expo-router'
 import { useLogout } from '@/hooks/mutations/use-logout'
 import { LogoutRequest } from '@/schemas/auth.schema'
 
@@ -46,7 +45,6 @@ const SettingsScreen = () => {
     logoutMutation.mutate(request, {
       onSuccess: () => {
         clearSession()
-        router.replace("/(auth)/login")
       },
       onError: (error:any) => {
         console.log("error in logging out", error)
@@ -132,8 +130,8 @@ const SettingsScreen = () => {
     }}
   />
 
-  <PrivacyPolicySheet ref={privacyPolicySheet} />
-  <AboutSheet ref={aboutSheet} />
+  {/* <PrivacyPolicySheet ref={privacyPolicySheet} />
+  <AboutSheet ref={aboutSheet} /> */}
 </SafeAreaView>
   )
 }

@@ -1,7 +1,7 @@
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { router } from 'expo-router'
+import { Link, router } from 'expo-router'
 import { Image } from 'expo-image'
 import { useRegister } from '@/hooks/mutations/use-register'
 import { RegisterErrors, registerRequestSchema } from '@/schemas/auth.schema'
@@ -45,10 +45,10 @@ export default function RegisterScreen() {
 
     registerMutation.mutate(result.data, {
       onSuccess: () => {
-        router.replace("/(auth)/login")
+        router.navigate("/(auth)/login")
       },
       onError: (error) => {
-       console.log(error)
+        console.log(error)
       }
     })
   }
@@ -68,9 +68,9 @@ export default function RegisterScreen() {
 
           <View style={styles.brand}>
             <View style={styles.logo}>
-              <Image  
-                style={styles.logoMark} 
-                source={require('@/assets/spendster.png')}  
+              <Image
+                style={styles.logoMark}
+                source={require('@/assets/spendster.png')}
               />
             </View>
             <Text style={styles.title}>Create account</Text>
@@ -182,10 +182,19 @@ export default function RegisterScreen() {
               </Text>
 
               <Pressable
-                onPress={() => router.push("/(auth)/login")}
+                onPress={() => {
+                  console.log("clicked log in button on register screen")
+                  router.replace("/(auth)/login")
+                }}
               >
                 <Text style={styles.link}>Log in</Text>
               </Pressable>
+
+              {/* <Link href="/(auth)/login" asChild>
+                <Pressable>
+                  <Text style={styles.link}>Log in</Text>
+                </Pressable>
+              </Link> */}
             </View>
           </View>
         </ScrollView>

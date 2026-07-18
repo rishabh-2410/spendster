@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -19,8 +20,8 @@ import { router } from "expo-router";
 import { useAuthStore } from "@/store/auth.store";
 import { AuthUser } from "@/types/auth.types";
 import { saveRefreshToken } from "@/store/token.store";
-import { useMutation } from "@tanstack/react-query";
-import { loginUser } from "@/services/auth.service";
+// import { useMutation } from "@tanstack/react-query";
+// import { loginUser } from "@/services/auth.service";
 
 export default function LoginScreen() {
 
@@ -62,7 +63,7 @@ export default function LoginScreen() {
         // setLoading(true)
         await handleSession(data);
         // setLoading(false)
-        router.replace("/(tabs)")
+        router.navigate("/")
       },
       onError: (error) => {
         console.log(error)
@@ -165,8 +166,8 @@ export default function LoginScreen() {
               <Pressable style={styles.primaryButton} onPress={handleLogin} disabled={loginMutation.isPending}>
                 <Text style={styles.primaryButtonText}>
                   {loginMutation.isPending
-                    ? "Logging in..."
-                    : "Log in"}
+                    ? <ActivityIndicator size={14}/>
+                    : "Login"}
                 </Text>
               </Pressable>
             </View>
@@ -177,7 +178,7 @@ export default function LoginScreen() {
               Don&apos;t have an account?
             </Text>
 
-            <Pressable>
+            <Pressable onPress={() => router.navigate("/(auth)/register")}>
               <Text style={styles.link}>Create account</Text>
             </Pressable>
           </View>

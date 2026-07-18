@@ -20,6 +20,7 @@ import {
   Text,
   TextInput,
   View,
+  Keyboard
 } from "react-native";
 
 import {
@@ -54,7 +55,7 @@ const AddExpenseSheet = forwardRef<BottomSheetModal>(
       reset,
       setValue,
       watch,
-      formState: { errors, isSubmitting },
+      formState: { errors },
     } = useForm<AddExpenseRequest>({
       resolver: zodResolver(addExpenseSchema),
 
@@ -85,7 +86,7 @@ const AddExpenseSheet = forwardRef<BottomSheetModal>(
 );
 
   const onSubmit = ( data: AddExpenseRequest) => {
-
+      Keyboard.dismiss() // close keyboard when submit button is clicked
       console.log(data)
 
 
@@ -99,23 +100,13 @@ const AddExpenseSheet = forwardRef<BottomSheetModal>(
       console.log(request)
 
       addExpenseMutation.mutate(request, {
-        onSuccess: () => {
-
-          queryClient.invalidateQueries({
-            queryKey: ["expenses"]
-          })
-
-
-          queryClient.invalidateQueries({
-            queryKey: ["stats"]
-          })
+        onSuccess: (savedExpense, _newExpense, context) => {
+          queryClient.setQueryData(["expenses"], (old:any=[]) => old.map((item:any) => item.id === context?.optimisticExpense?.id ? savedExpense : item)
+          )
           reset();
           (
             ref as React.RefObject<BottomSheetModal>
           ).current?.dismiss();
-        },
-        onError: (error) => {
-          console.log(error);
         },
       })
     };
@@ -151,6 +142,7 @@ const AddExpenseSheet = forwardRef<BottomSheetModal>(
                 <TextInput
                   value={field.value}
                   onChangeText={field.onChange}
+                  onSubmitEditing={Keyboard.dismiss}
                   placeholder="Dinner with friends"
                   placeholderTextColor="#8A8A8A"
                   style={[
@@ -200,6 +192,8 @@ const AddExpenseSheet = forwardRef<BottomSheetModal>(
                         ? ""
                         : field.value.toString()
                     }
+                    // onBlur={Keyboard.dismiss}
+                    onSubmitEditing={Keyboard.dismiss}
                     onChangeText={(text) => {
                       const value = Number(text);
 
@@ -234,7 +228,8 @@ const AddExpenseSheet = forwardRef<BottomSheetModal>(
                 return (
                   <Pressable
                     key={category.value}
-                    onPress={() =>
+                    onPress={() => {
+                      Keyboard.dismiss()
                       setValue(
                         "category",
                         category.value,
@@ -242,6 +237,7 @@ const AddExpenseSheet = forwardRef<BottomSheetModal>(
                           shouldValidate: true,
                         }
                       )
+                    }
                     }
                     style={[
                       styles.categoryChip,
@@ -287,8 +283,10 @@ const AddExpenseSheet = forwardRef<BottomSheetModal>(
 
             <Pressable
               style={styles.dateButton}
-              onPress={() =>
-                setShowDatePicker(true)
+              onPress={() => {
+                  Keyboard.dismiss()
+                  setShowDatePicker(true)
+              }
               }
             >
               <View>

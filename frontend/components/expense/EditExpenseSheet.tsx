@@ -9,7 +9,6 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
 } from "react";
 
 
@@ -19,6 +18,7 @@ import {
   Text,
   TextInput,
   View,
+  Keyboard
 } from "react-native";
 
 import {
@@ -44,7 +44,7 @@ import { useEditExpense } from "@/hooks/mutations/user-edit-expense";
 
 type Props = {
   expense: Expense | null;
-  onSuccess: (expenseId: string) => void;
+  onSuccess: () => void;
 };
 
 export const EditExpenseSheet = forwardRef<BottomSheetModal, Props>(
@@ -61,7 +61,7 @@ export const EditExpenseSheet = forwardRef<BottomSheetModal, Props>(
       reset,
       setValue,
       watch,
-      formState: { errors, isSubmitting, dirtyFields },
+      formState: { errors, dirtyFields },
     } = useForm<EditExpenseRequest>({
       resolver: zodResolver(editExpenseScheme),
 
@@ -111,10 +111,7 @@ export const EditExpenseSheet = forwardRef<BottomSheetModal, Props>(
       if (!expense) {
         return
       }
-      console.log("dirtyFields", dirtyFields);
-      console.log("category dirty", dirtyFields.category);
-      console.log("data", data);
-
+ 
       console.log("Selected form data for edit expense", data)
 
       if (dirtyFields.amount) {
@@ -146,7 +143,7 @@ export const EditExpenseSheet = forwardRef<BottomSheetModal, Props>(
             queryKey: ["stats"]
           })
 
-          onSuccess(expense.id);
+          onSuccess();
           reset();
           (
             ref as React.RefObject<BottomSheetModal>
@@ -215,6 +212,8 @@ export const EditExpenseSheet = forwardRef<BottomSheetModal, Props>(
                     keyboardType="decimal-pad"
                     placeholder="0.00"
                     placeholderTextColor="#8A8A8A"
+                    onSubmitEditing={Keyboard.dismiss}
+                    onBlur={Keyboard.dismiss}
                     value={field.value === undefined
                       ? ""
                       : field.value.toString()}
@@ -253,7 +252,8 @@ export const EditExpenseSheet = forwardRef<BottomSheetModal, Props>(
                 return (
                   <Pressable
                     key={category.value}
-                    onPress={() =>
+                    onPress={() => {
+                      Keyboard.dismiss()
                       setValue(
                         "category",
                         category.value,
@@ -263,6 +263,7 @@ export const EditExpenseSheet = forwardRef<BottomSheetModal, Props>(
                         }
                       )
                     }
+                  }
                     style={[
                       styles.categoryChip,
                       selected &&

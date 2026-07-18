@@ -29,7 +29,7 @@ export const registerStyles = StyleSheet.create({
   content: {
     flexGrow: 1,
     paddingHorizontal: 24,
-    paddingTop: 32,
+    paddingTop: 10,
     paddingBottom: 40,
   },
 
@@ -94,7 +94,7 @@ export const registerStyles = StyleSheet.create({
   },
 
   formCard: {
-    marginTop: 40,
+    marginTop: 28,
 
     padding: 16,
 

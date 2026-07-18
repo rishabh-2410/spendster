@@ -1,36 +1,35 @@
 import { Redirect, Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 import { useAuthStore } from "@/store/auth.store";
 
 import AddExpenseSheet from "@/components/expense/AddExpenseSheet";
-import { registerStyles } from "@/styles/global.styles";
-import { Pressable } from "react-native";
+import { BlurView } from "expo-blur";
+
 
 export default function TabLayout() {
-  const accessToken = useAuthStore(
-    (state) => state.accessToken
-  );
+ const accessToken = useAuthStore((state) => state.accessToken);
+const addBottomSheetRef = useRef<BottomSheetModal>(null);
+const [sheetReady, setSheetReady] = useState<boolean>(false)
+const isSignedIn = !!accessToken
 
-  const isLoading = useAuthStore(
-    (state) => state.isLoading
-  );
+useEffect(() => {
+  const id = requestAnimationFrame(() => {
+    setSheetReady(true)
+  })
 
-  const addBottomSheetRef =
-    useRef<BottomSheetModal>(null);
+  return () => cancelAnimationFrame(id)
+})
 
-  if (isLoading) {
-    return null;
-  }
 
-  if (!accessToken) {
+ if (!isSignedIn) {
     return <Redirect href="/(auth)/login" />;
   }
+
 
   return (
     <>
@@ -39,11 +38,10 @@ export default function TabLayout() {
           headerShown: false,
 
           tabBarShowLabel: false,
-
-          tabBarBackground: () => (
+           tabBarBackground: () => (
             <BlurView
               tint="systemChromeMaterial"
-              intensity={90}
+              intensity={70}
               style={{
                 flex: 1,
                 borderRadius: 28,
@@ -54,8 +52,10 @@ export default function TabLayout() {
 
           tabBarStyle: {
             position: "absolute",
-
-            margin: 30,
+            // borderColor: 'red',
+            // borderWidth: 2,
+            marginBottom: 30,
+            marginHorizontal: 30,
             height: 72,
             display: "flex",
             flexDirection: "row",
@@ -103,21 +103,22 @@ export default function TabLayout() {
 
         <Tabs.Screen
           name="expense"
+          listeners={{
+            tabPress: (e) => {
+              e.preventDefault()
+              addBottomSheetRef.current?.present()
+            }
+          }}
           options={{
             tabBarIcon: ({color, focused}) => (
-                <Pressable
-                style={registerStyles.addButton}
-                onPress={() =>
-                  addBottomSheetRef.current?.present()
-                }
-              >
+    
                 <Ionicons
                   name="add-circle-outline"
-                  size={32}
+                  size={30}
                   color={color}
            
                 />
-              </Pressable>
+  
             ),
           }}
         />
@@ -140,7 +141,7 @@ export default function TabLayout() {
         />
       </Tabs>
 
-      <AddExpenseSheet ref={addBottomSheetRef} />
+      {sheetReady ? <AddExpenseSheet ref={addBottomSheetRef} /> : null}
     </>
   );
 }

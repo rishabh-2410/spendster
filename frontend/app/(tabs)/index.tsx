@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   Pressable,
   StyleSheet,
@@ -13,28 +14,28 @@ import { useExpenses } from "@/hooks/query/use-expenses";
 import { useStats } from "@/hooks/query/use-stats";
 import { useAuthStore } from "@/store/auth.store";
 import { useDeleteExpense } from "@/hooks/mutations/use-delete-expense";
-import { queryClient } from "@/lib/query-client";
 import React, { useRef, useState } from "react";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { EditExpenseSheet } from "@/components/expense/EditExpenseSheet";
 import { Expense } from "@/schemas/expense.schema";
 import ReanimatedSwipeable, { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
+import { router } from "expo-router";
 
 
 
 export default function DashboardScreen() {
 
   const user = useAuthStore((state) => state.user)
-  const [selectedExpense, setSelectedExpense] =useState<Expense | null>(null);
-  
+  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
+
 
   const expenseQuery = useExpenses();
   const statsQuery = useStats();
 
   const deleteMutation = useDeleteExpense();
-  const editBottomsheet =useRef<BottomSheetModal>(null);
+  const editBottomsheet = useRef<BottomSheetModal>(null);
 
- const openedSwipeableRef = useRef<SwipeableMethods | null>(null);
+  const openedSwipeableRef = useRef<SwipeableMethods | null>(null);
 
 
 
@@ -42,7 +43,15 @@ export default function DashboardScreen() {
     expenseQuery.isPaused ||
     statsQuery.isPending
   ) {
-    return null;
+    return (
+      <View style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}>
+        <ActivityIndicator />
+      </View>
+  )
   }
 
 
@@ -60,23 +69,14 @@ export default function DashboardScreen() {
   const expenses = expenseQuery.data;
   const stats = statsQuery.data;
 
-  async function handleEdit(expense: Expense) {  
+  async function handleEdit(expense: Expense) {
     setSelectedExpense(expense)
-     editBottomsheet.current?.present()
+    editBottomsheet.current?.present()
   }
 
   async function handleDelete(expenseId: string) {
     if (user !== null) {
       deleteMutation.mutate(expenseId, {
-        onSuccess: () => {
-          queryClient.invalidateQueries({
-            queryKey: ["expenses"]
-          })
-
-          queryClient.invalidateQueries({
-            queryKey: ["stats"]
-          })
-        },
         onError: (error) => {
           console.log("error in delete mutation:", error)
         }
@@ -85,40 +85,40 @@ export default function DashboardScreen() {
 
   }
 
-  const handleEditSuccess = (expenseId: string) => {
+  const handleEditSuccess = () => {
     openedSwipeableRef.current?.close();
-};
+  };
 
-  const renderRightActions = (item:Expense) => (
+  const renderRightActions = (item: Expense) => (
     <View
-        style={{
-            flexDirection: "row",
-            alignItems: "center",
-        }}
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+      }}
     >
-        <Pressable
-            style={styles.editButton}
-            onPress={() => handleEdit(item)}
-        >
-            <MaterialIcons
-                name="mode-edit-outline"
-                size={20}
-                color="#fff"
-            />
-        </Pressable>
+      <Pressable
+        style={styles.editButton}
+        onPress={() => handleEdit(item)}
+      >
+        <MaterialIcons
+          name="mode-edit-outline"
+          size={20}
+          color="#fff"
+        />
+      </Pressable>
 
-        <Pressable
-            style={styles.deleteButton}
-            onPress={() => handleDelete(item.id)}
-        >
-            <Ionicons
-                name="trash-outline"
-                size={20}
-                color="#fff"
-            />
-        </Pressable>
+      <Pressable
+        style={styles.deleteButton}
+        onPress={() => handleDelete(item.id)}
+      >
+        <Ionicons
+          name="trash-outline"
+          size={20}
+          color="#fff"
+        />
+      </Pressable>
     </View>
-);
+  );
 
   const renderHeader = () => {
     return (
@@ -214,7 +214,7 @@ export default function DashboardScreen() {
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Recent expenses</Text>
 
-          <Pressable>
+          <Pressable onPress={() => router.push("/expense-list")}>
             <Text style={styles.sectionAction}>View all</Text>
           </Pressable>
         </View>
@@ -225,14 +225,20 @@ export default function DashboardScreen() {
   const renderExpense = ({ item }: { item: Expense }) => {
     const rowRef = React.createRef<SwipeableMethods>();
     return (
-      <ReanimatedSwipeable 
+      <ReanimatedSwipeable
         renderRightActions={() => renderRightActions(item)}
         ref={rowRef}
         onSwipeableOpen={() => {
           openedSwipeableRef.current = rowRef.current;
         }}
       >
-        <Pressable style={styles.expenseItem}>
+        <Pressable
+          style={styles.expenseItem}
+          onPress={() => router.push({
+            pathname: "/expense-detail",
+            params: { id: item.id },
+          })}
+        >
           <View style={styles.categoryIcon}>
             <Ionicons
               name="fast-food-outline"
@@ -542,9 +548,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#EA7A53",
 
     borderRadius: 18,
-},
+  },
 
-deleteButton: {
+  deleteButton: {
     width: 40,
     height: 40,
 
@@ -557,5 +563,5 @@ deleteButton: {
     borderRadius: 18,
 
     marginLeft: 8,
-},
+  },
 });

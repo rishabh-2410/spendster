@@ -5,12 +5,14 @@ import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import 'react-native-reanimated';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from '@/lib/query-client';
 import { restoreSession } from '@/services/session.service';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { useAuthStore } from '@/store/auth.store';
+
 import {
   LeagueSpartan_300Light,
   LeagueSpartan_400Regular,
@@ -19,17 +21,20 @@ import {
   LeagueSpartan_700Bold,
   LeagueSpartan_800ExtraBold,
 } from "@expo-google-fonts/league-spartan";
+// import { useAuthStore } from '@/store/auth.store';
 
 
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
 
+  const [sessionReady, setSessionReady] = useState(false);
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const isSignedIn = !!accessToken;
 
-  const [fontsLoaded] = useFonts({LeagueSpartan_700Bold,
+
+  const [fontsLoaded] = useFonts({
+    LeagueSpartan_700Bold,
     'sans-medium': LeagueSpartan_500Medium,
     'sans-regular': LeagueSpartan_400Regular,
     'sans-semibold': LeagueSpartan_600SemiBold,
@@ -38,33 +43,55 @@ export default function RootLayout() {
   })
 
   useEffect(() => {
-    restoreSession();
+    let mounted = true;
+
+    async function bootstrap() {
+      try {
+        await restoreSession()
+      } finally {
+        if (mounted) {
+          setSessionReady(true)
+        }
+      }
+    }
+
+    bootstrap();
+
+    // Cleanup
+    return () => {
+      mounted = false
+    }
+
   }, []);
 
 
   useEffect(() => {
-    if (fontsLoaded) {
+    if (fontsLoaded && sessionReady) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded])
+  }, [fontsLoaded, sessionReady])
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || !sessionReady) {
     return null;
   }
-
-
-
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
         <BottomSheetModalProvider>
           <ThemeProvider value={DefaultTheme}>
-            <Stack>
-              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            </Stack>
-            <StatusBar style="auto" />
+              <Stack
+                key={isSignedIn ? "app-stack" : "auth-stack"}
+                screenOptions={{ headerShown: false }}
+              >
+                <Stack.Screen name="index" />
+                {isSignedIn ? (
+                  <Stack.Screen name="(tabs)" />
+                ) : (
+                  <Stack.Screen name="(auth)" />
+                )}
+              </Stack>
+            <StatusBar style="dark" />
           </ThemeProvider>
         </BottomSheetModalProvider>
       </QueryClientProvider>

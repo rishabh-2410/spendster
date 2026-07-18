@@ -7,11 +7,7 @@ import { refreshUser } from "./auth.service";
     const {
     setSession,
     clearSession,
-    setLoading,
   } = useAuthStore.getState();
-
-
-   setLoading(true);
 
 
    try {
@@ -41,7 +37,5 @@ import { refreshUser } from "./auth.service";
     console.log("error setting session", error)
     await deleteRefreshToken();
     clearSession();
-  } finally {
-    setLoading(false);
-  }
+  } 
 }
