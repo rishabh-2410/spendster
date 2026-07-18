@@ -75,13 +75,6 @@ This repository documents the design, architecture, and development process to p
 
 ## 4. Screenshots
 
-<!-- ![LoginScreen](frontend/assets/screenshots/login.png)
-![RegisterScreen](frontend/assets/screenshots/register.png)
-![Dashboard](frontend/assets/screenshots/home.png)
-![AddExpense](frontend/assets/screenshots/add-expense.png)
-![ExpenseDetail](frontend/assets/screenshots/expense-details.png)
-![SettingsScreen](frontend/assets/screenshots/settings.png) -->
-
 <p align="auto">
   <img src="frontend/assets/screenshots/login.png" width="220" />
   <img src="frontend/assets/screenshots/home.png" width="220" />
@@ -95,53 +88,57 @@ This repository documents the design, architecture, and development process to p
 
 ```mermaid
 flowchart LR
-    User["Mobile User"] --> App["Expo / React Native App"]
 
-    subgraph Frontend["Frontend"]
-        Router["Expo Router"]
-        Screens["Screens & Bottom Sheets"]
-        Query["TanStack Query"]
-        AuthStore["Zustand Auth Store"]
-        SecureStore["Expo Secure Store"]
-        Services["Fetch-based Service Layer"]
+    user["Mobile User"] --> app["React Native App"]
+
+    subgraph frontend["Frontend"]
+        router["Expo Router"]
+        screens["Screens and Bottom Sheets"]
+        query["TanStack Query"]
+        authStore["Zustand Auth Store"]
+        secureStore["Expo Secure Store"]
+        services["Service Layer"]
     end
 
-    App --> Router
-    Router --> Screens
-    Screens --> Query
-    Screens --> AuthStore
-    AuthStore --> SecureStore
-    Query --> Services
+    app --> router
+    router --> screens
+    screens --> query
+    screens --> authStore
+    authStore --> secureStore
+    query --> services
 
-    Services --> API["Go REST API"]
+    services --> api["Go REST API"]
 
-    subgraph Backend["Backend"]
-        Routes["Route Registration"]
-        Middleware["JWT Auth Middleware"]
-        Handlers["HTTP Handlers"]
-        UserService["User Service"]
-        ExpenseService["Expense Service"]
-        UserRepo["User Repository"]
-        TokenRepo["Refresh Token Repository"]
-        ExpenseRepo["Expense Repository"]
-        DashboardRepo["Dashboard Repository"]
+    subgraph backend["Backend"]
+        routes["Route Registration"]
+        middleware["JWT Auth Middleware"]
+        handlers["HTTP Handlers"]
+        userService["User Service"]
+        expenseService["Expense Service"]
+        userRepo["User Repository"]
+        tokenRepo["Refresh Token Repository"]
+        expenseRepo["Expense Repository"]
+        dashboardRepo["Dashboard Repository"]
     end
 
-    API --> Routes
-    Routes --> Middleware
-    Routes --> Handlers
-    Handlers --> UserService
-    Handlers --> ExpenseService
-    UserService --> UserRepo
-    UserService --> TokenRepo
-    ExpenseService --> UserRepo
-    ExpenseService --> ExpenseRepo
-    ExpenseService --> DashboardRepo
+    api --> routes
+    routes --> middleware
+    routes --> handlers
 
-    UserRepo --> DB[("PostgreSQL")]
-    TokenRepo --> DB
-    ExpenseRepo --> DB
-    DashboardRepo --> DB
+    handlers --> userService
+    handlers --> expenseService
+
+    userService --> userRepo
+    userService --> tokenRepo
+
+    expenseService --> userRepo
+    expenseService --> expenseRepo
+    expenseService --> dashboardRepo
+
+    userRepo --> db[("PostgreSQL")]
+    tokenRepo --> db
+    expenseRepo --> db
+    dashboardRepo --> db
 ```
 
 ## 6. Authentication Flow
@@ -181,17 +178,17 @@ erDiagram
     USERS ||--o{ REFRESH_TOKENS : receives
 
     USERS {
-        uuid id PK
+        uuid id
         text name
-        varchar email UNIQUE
+        varchar email
         text hashed_password
         timestamptz created_at
         timestamptz updated_at
     }
 
     EXPENSES {
-        uuid id PK
-        uuid user_id FK
+        uuid id
+        uuid user_id
         text title
         decimal amount
         text category
@@ -201,9 +198,9 @@ erDiagram
     }
 
     REFRESH_TOKENS {
-        uuid id PK
-        uuid user_id FK
-        text token_hash UNIQUE
+        uuid id
+        uuid user_id
+        text token_hash
         timestamptz created_at
         timestamptz revoked_at
         timestamptz expires_at
@@ -471,4 +468,3 @@ Delivery details:
 ## 20. License
 
 `TODO: No LICENSE file is currently present in the repository. Add one before public distribution.`
-
