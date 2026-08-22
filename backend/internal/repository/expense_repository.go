@@ -82,7 +82,7 @@ func (er *Expense) UpdateExpense(docID string, userID string, updateDetails *req
 		UPDATE expenses
 		SET 
     		amount=COALESCE($1, amount),
-    		category=COALESCE($2, category)
+    		category=COALESCE($2, category),
 			updated_at=NOW()
 		WHERE id=$3 AND user_id=$4
 		RETURNING id, user_id, title, amount, date_of_expense, category, created_at, updated_at		

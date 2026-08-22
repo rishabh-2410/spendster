@@ -15,11 +15,11 @@ type Router struct {
 	notificationHandler *notification.Handler
 }
 
-func NewRouter(userHandler *user.Handler, expenseHandler *expense.Handler, notificationHandler *notification.Handler) *Router {
+func NewRouter(userHandler *user.Handler, expenseHandler *expense.Handler, _ *notification.Handler) *Router {
 	return &Router{
-		userHandler:         userHandler,
-		expenseHandler:      expenseHandler,
-		notificationHandler: notificationHandler,
+		userHandler:    userHandler,
+		expenseHandler: expenseHandler,
+		// notificationHandler: notificationHandler,
 	}
 }
 
