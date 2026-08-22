@@ -1,7 +1,7 @@
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link, router } from 'expo-router'
+import { router } from 'expo-router'
 import { Image } from 'expo-image'
 import { useRegister } from '@/hooks/mutations/use-register'
 import { RegisterErrors, registerRequestSchema } from '@/schemas/auth.schema'
@@ -17,18 +17,12 @@ export default function RegisterScreen() {
   const registerMutation = useRegister();
 
   const handleRegister = () => {
-
     setErrors({});
     const result = registerRequestSchema.safeParse({
       name,
       email,
       password
     })
-
-
-    console.log("Name", name)
-    console.log("Email", email)
-    console.log("Password", password)
 
     if (!result.success) {
       const fieldErrors = result.error.flatten().fieldErrors;
@@ -189,12 +183,6 @@ export default function RegisterScreen() {
               >
                 <Text style={styles.link}>Log in</Text>
               </Pressable>
-
-              {/* <Link href="/(auth)/login" asChild>
-                <Pressable>
-                  <Text style={styles.link}>Log in</Text>
-                </Pressable>
-              </Link> */}
             </View>
           </View>
         </ScrollView>

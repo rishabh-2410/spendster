@@ -35,6 +35,7 @@ This repository documents the design, architecture, and development process to p
 | Expense detail screen | ✅ |
 | Swipe actions on expense rows | ✅ |
 | Secure refresh token storage on device | ✅  |
+| Push notification registration and handling | ✅ |
 
 ## 3. Tech Stack
 
@@ -42,8 +43,8 @@ This repository documents the design, architecture, and development process to p
 
 | Category | Technology |
 | --- | --- |
-| App framework | Expo 54 |
-| UI runtime | React 19, React Native 0.81 |
+| App framework | Expo 57 |
+| UI runtime | React 19, React Native 0.86 |
 | Navigation | Expo Router |
 | Server state | TanStack React Query |
 | Client session state | Zustand |
@@ -381,7 +382,7 @@ make install
 
 1. Create a PostgreSQL database.
 2. Copy values from `backend/.env.example` into your local environment or shell and add your values.
-4. Create the tables on your database from the SQL files under `backend/internal/db/queries/create`.
+4. Create the tables on your database from the SQL files under `backend/internal/db/queries/create`, including `CREATE_PUSH_TOKENS_TABLE.SQL`.
 
 Example:
 
@@ -404,6 +405,8 @@ export EXPO_PUBLIC_API_URL="http://localhost:8080"
 npm install
 npx expo start
 ```
+
+Push notifications require an EAS development or production build, plus FCM v1 credentials for Android and APNs credentials for iOS. The app registers its Expo push token after an authenticated user grants notification permission. Use the Expo push notifications tool to send a test notification to a registered token.
 
 ### Combined Dev Workflow
 

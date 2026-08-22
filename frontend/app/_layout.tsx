@@ -1,9 +1,18 @@
-import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { SplashScreen, Stack } from 'expo-router';
+import { DefaultTheme, SplashScreen, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
+import * as Notifications from 'expo-notifications';
 import 'react-native-reanimated';
+import {
+  InputAccessoryView,
+  Keyboard,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 import { useEffect, useState } from 'react';
 
@@ -12,6 +21,7 @@ import { queryClient } from '@/lib/query-client';
 import { restoreSession } from '@/services/session.service';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useAuthStore } from '@/store/auth.store';
+import { registerForPushNotifications, savePushToken } from '@/services/notification.service';
 
 import {
   LeagueSpartan_300Light,
@@ -64,6 +74,40 @@ export default function RootLayout() {
 
   }, []);
 
+  useEffect(() => {
+    if (!isSignedIn) {
+      return;
+    }
+
+    let active = true;
+
+    async function registerPushToken() {
+      const token = await registerForPushNotifications();
+      if (!active || !token) {
+        return;
+      }
+
+      try {
+        await savePushToken(token);
+      } catch (error) {
+        console.warn("Unable to register push notifications.", error);
+      }
+    }
+
+    registerPushToken();
+
+    const subscription = Notifications.addPushTokenListener(({ data }) => {
+      savePushToken(data).catch((error) => {
+        console.warn("Unable to update push notification token.", error);
+      });
+    });
+
+    return () => {
+      active = false;
+      subscription.remove();
+    };
+  }, [isSignedIn]);
+
 
   useEffect(() => {
     if (fontsLoaded && sessionReady) {
@@ -95,6 +139,36 @@ export default function RootLayout() {
           </ThemeProvider>
         </BottomSheetModalProvider>
       </QueryClientProvider>
+      {Platform.OS === "ios" && (
+        <InputAccessoryView nativeID="keyboard-done">
+          <View style={keyboardDoneStyles.bar}>
+            <Pressable
+              onPress={() => {
+                Keyboard.dismiss();
+              }}
+              hitSlop={12}
+            >
+              <Text style={keyboardDoneStyles.done}>Done</Text>
+            </Pressable>
+          </View>
+        </InputAccessoryView>
+      )}
     </GestureHandlerRootView>
   );
 }
+
+const keyboardDoneStyles = StyleSheet.create({
+  bar: {
+    backgroundColor: "#EFE9D5",
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: "#D8D2BE",
+    alignItems: "flex-end",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  done: {
+    color: "#EA7A53",
+    fontFamily: "sans-semibold",
+    fontSize: 16,
+  },
+});

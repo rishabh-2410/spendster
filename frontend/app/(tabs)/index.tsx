@@ -131,14 +131,6 @@ export default function DashboardScreen() {
 
             <Text style={styles.greeting}>Hola {user ? user?.name?.charAt(0)?.toUpperCase() + user?.name?.slice(1) : "Guest"} 👋</Text>
           </View>
-
-          <Pressable style={styles.headerAction}>
-            <Ionicons
-              name="notifications-outline"
-              size={26}
-              color="#081126"
-            />
-          </Pressable>
         </View>
 
         <View style={styles.summaryCard}>
@@ -168,12 +160,6 @@ export default function DashboardScreen() {
                 ]}
               />
             </View>
-
-            <Pressable style={styles.analysisButton}>
-              <Text style={styles.analysisButtonText}>
-                View analysis
-              </Text>
-            </Pressable>
           </View>
         </View>
 

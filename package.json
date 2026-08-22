@@ -1,5 +1,6 @@
 {
-  "dependencies": {
-    "@tanstack/react-query": "^5.101.2"
+  "devDependencies": {
+    "babel-plugin-module-resolver": "^5.0.3",
+    "eslint-import-resolver-typescript": "^4.4.5"
   }
 }

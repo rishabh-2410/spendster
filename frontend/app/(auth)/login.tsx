@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -20,8 +21,6 @@ import { router } from "expo-router";
 import { useAuthStore } from "@/store/auth.store";
 import { AuthUser } from "@/types/auth.types";
 import { saveRefreshToken } from "@/store/token.store";
-// import { useMutation } from "@tanstack/react-query";
-// import { loginUser } from "@/services/auth.service";
 
 export default function LoginScreen() {
 
@@ -137,6 +136,9 @@ export default function LoginScreen() {
                     keyboardType="email-address"
                     autoCapitalize="none"
                     autoCorrect={false}
+                    returnKeyType="done"
+                    inputAccessoryViewID="keyboard-done"
+                    onSubmitEditing={() => Keyboard.dismiss()}
                   />
                 </View>
               </View>
@@ -146,12 +148,6 @@ export default function LoginScreen() {
               <View style={styles.field}>
                 <View style={styles.fieldHeader}>
                   <Text style={styles.label}>PASSWORD</Text>
-
-                  <Pressable>
-                    <Text style={styles.forgotPassword}>
-                      Forgot password?
-                    </Text>
-                  </Pressable>
                 </View>
 
                 <View style={styles.inputContainer}>
@@ -164,6 +160,9 @@ export default function LoginScreen() {
                     secureTextEntry
                     autoCapitalize="none"
                     autoCorrect={false}
+                    returnKeyType="done"
+                    inputAccessoryViewID="keyboard-done"
+                    onSubmitEditing={() => Keyboard.dismiss()}
                   />
                 </View>
               </View>

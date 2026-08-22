@@ -20,7 +20,8 @@ import {
   Text,
   TextInput,
   View,
-  Keyboard
+  Keyboard,
+  Platform,
 } from "react-native";
 
 import {
@@ -142,14 +143,15 @@ const AddExpenseSheet = forwardRef<BottomSheetModal>(
                 <TextInput
                   value={field.value}
                   onChangeText={field.onChange}
-                  onSubmitEditing={Keyboard.dismiss}
+                  onSubmitEditing={() => Keyboard.dismiss()}
                   placeholder="Dinner with friends"
                   placeholderTextColor="#8A8A8A"
                   style={[
                     styles.input,
                     errors.title && styles.inputError,
                   ]}
-                  returnKeyType="next"
+                  returnKeyType="done"
+                  inputAccessoryViewID="keyboard-done"
                   autoCorrect={false}
                   autoComplete="off"
                 />
@@ -192,8 +194,9 @@ const AddExpenseSheet = forwardRef<BottomSheetModal>(
                         ? ""
                         : field.value.toString()
                     }
-                    // onBlur={Keyboard.dismiss}
-                    onSubmitEditing={Keyboard.dismiss}
+                    onSubmitEditing={() => Keyboard.dismiss()}
+                    returnKeyType="done"
+                    inputAccessoryViewID="keyboard-done"
                     onChangeText={(text) => {
                       const value = Number(text);
 

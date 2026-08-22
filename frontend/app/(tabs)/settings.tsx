@@ -60,9 +60,8 @@ const SettingsScreen = () => {
     <SafeAreaView style={styles.safeArea}>
   <FlatList
     data={[
-      { id: "1", title: "Account Settings", icon: "person-outline", onpress: handleAccountSettings },
-      { id: "2", title: "Privacy Policy", icon: "shield-outline", onpress: handlePrivacySettings},
-      { id: "3", title: "About", icon: "information-circle-outline", onpress: handleAbout},
+      { id: "1", title: "Privacy Policy", icon: "shield-outline", onpress: handlePrivacySettings},
+      { id: "2", title: "About", icon: "information-circle-outline", onpress: handleAbout},
     ]}
     keyExtractor={(item) => item.id}
     showsVerticalScrollIndicator={false}

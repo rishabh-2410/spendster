@@ -3,20 +3,23 @@ package route
 import (
 	"expense-backend/internal/auth"
 	expense "expense-backend/internal/handlers/expense"
+	notification "expense-backend/internal/handlers/notification"
 	user "expense-backend/internal/handlers/user"
 	"expense-backend/internal/logging"
 	"net/http"
 )
 
 type Router struct {
-	userHandler    *user.Handler
-	expenseHandler *expense.Handler
+	userHandler         *user.Handler
+	expenseHandler      *expense.Handler
+	notificationHandler *notification.Handler
 }
 
-func NewRouter(userHandler *user.Handler, expenseHandler *expense.Handler) *Router {
+func NewRouter(userHandler *user.Handler, expenseHandler *expense.Handler, notificationHandler *notification.Handler) *Router {
 	return &Router{
-		userHandler:    userHandler,
-		expenseHandler: expenseHandler,
+		userHandler:         userHandler,
+		expenseHandler:      expenseHandler,
+		notificationHandler: notificationHandler,
 	}
 }
 
@@ -75,6 +78,13 @@ func (r *Router) RegisterRoutes() {
 		"GET /api/v1/expenses",
 		auth.Middleware(
 			http.HandlerFunc(r.expenseHandler.HandleGetExpenses),
+		),
+	)
+
+	http.Handle(
+		"PUT /api/v1/push-tokens",
+		auth.Middleware(
+			http.HandlerFunc(r.notificationHandler.HandleRegisterPushToken),
 		),
 	)
 
