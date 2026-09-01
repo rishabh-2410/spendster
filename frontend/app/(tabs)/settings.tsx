@@ -1,22 +1,22 @@
-import { View, Text, Pressable, FlatList, StyleSheet } from 'react-native'
+import { View, Text, Pressable, FlatList, StyleSheet, Alert } from 'react-native'
 import React, { useRef } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useAuthStore } from '@/store/auth.store'
 import { BottomSheetModal } from '@gorhom/bottom-sheet'
-// import PrivacyPolicySheet from '@/components/settings/PrivacyPolicySheet'
-// import AboutSheet from '@/components/settings/AboutSheet'
 import { getRefreshToken } from '@/store/token.store'
 import { useLogout } from '@/hooks/mutations/use-logout'
 import { LogoutRequest } from '@/schemas/auth.schema'
 import PrivacyPolicySheet from '@/components/settings/PrivacyPolicySheet'
 import AboutSheet from '@/components/settings/AboutSheet'
+import { useDeleteUser } from '@/hooks/mutations/use-delete-user'
 
 const SettingsScreen = () => {
 
   const clearSession = useAuthStore.getState().clearSession
   const privacyPolicySheet =useRef<BottomSheetModal>(null);
   const aboutSheet =useRef<BottomSheetModal>(null);
+  const deleteAccountMutation = useDeleteUser()
 
   const logoutMutation = useLogout()
   
@@ -30,6 +30,23 @@ const SettingsScreen = () => {
 
   function handleAbout() {
     aboutSheet.current?.present()
+  }
+
+  function handleDeleteAccount() {
+    Alert.alert("Delete Account", "Are you sure you want to delete your account?", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Delete", style: "destructive", onPress: () => {
+        deleteAccountMutation.mutate(undefined, {
+          onSuccess: () => {
+            clearSession()
+          },
+          onError: (error:any) => {
+            console.log("error in deleting account", error)
+            Alert.alert("Error", "Failed to delete account")
+          }
+        })
+      } },
+    ])
   }
 
   async function handleLogout() {
@@ -109,21 +126,39 @@ const SettingsScreen = () => {
       </Pressable>
     )}
     ListFooterComponent={
-      <Pressable
-        onPress={handleLogout} 
-        style={({pressed}) => [
-          styles.logoutButton,
-          pressed ? {opacity: 0.45} : null
-      ]}>
-        <Ionicons
-          name="log-out-outline"
-          size={22}
-          color="#081126"
-        />
-        <Text style={styles.logoutText}>
-          Log Out
-        </Text>
-      </Pressable>
+      <View>
+        <Pressable
+          onPress={handleLogout} 
+          style={({pressed}) => [
+            styles.logoutButton,
+            pressed ? {opacity: 0.45} : null
+        ]}>
+          <Ionicons
+            name="log-out-outline"
+            size={22}
+            color="#081126"
+          />
+          <Text style={styles.logoutText}>
+            Log Out
+          </Text>
+        </Pressable>
+
+        <Pressable
+          onPress={handleDeleteAccount}
+          style={({pressed}) => [
+            styles.deleteAccountButton,
+            pressed ? {opacity: 0.45} : null
+        ]}>
+          <Ionicons
+            name="trash-outline"
+            size={22}
+            color="#BA1A1A"
+          />
+          <Text style={styles.deleteAccountText}>
+            Delete Account
+          </Text>
+        </Pressable>
+      </View>
     }
     contentContainerStyle={{
       padding: 24,
@@ -244,5 +279,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "sans-bold",
     color: "#081126",
+  },
+
+  deleteAccountButton: {
+    marginTop: 14,
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: "#BA1A1A",
+
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+  },
+
+  deleteAccountText: {
+    fontSize: 16,
+    fontFamily: "sans-bold",
+    color: "#BA1A1A",
   },
 });

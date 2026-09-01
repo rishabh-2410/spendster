@@ -101,3 +101,24 @@ export async function logoutUser(request: LogoutRequest) {
         throw new Error("Unable to logout")
     }
 }
+
+
+export async function deleteUser() {
+    const accessToken = useAuthStore.getState().accessToken
+
+    const response = await fetch(
+        `${API_URL}/api/v1/auth/delete`,
+        {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${accessToken}`
+            },
+        }
+    )
+
+    if(!response.ok) {
+        console.log("error while deleting user status", response.status)
+        throw new Error("Unable to delete user")
+    }
+}

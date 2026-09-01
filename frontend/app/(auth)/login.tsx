@@ -172,7 +172,7 @@ export default function LoginScreen() {
               <Pressable style={styles.primaryButton} onPress={handleLogin} disabled={loginMutation.isPending}>
                 <Text style={styles.primaryButtonText}>
                   {loginMutation.isPending
-                    ? <ActivityIndicator size={14}/>
+                    ? <ActivityIndicator size={14} color={"#fff"}/>
                     : "Login"}
                 </Text>
               </Pressable>
