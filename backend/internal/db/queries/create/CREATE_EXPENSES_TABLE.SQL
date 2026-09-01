@@ -7,5 +7,5 @@ CREATE TABLE expenses(
     date_of_expense TIMESTAMPTZ NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (user_id) REFERENCES users(id) 
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 )

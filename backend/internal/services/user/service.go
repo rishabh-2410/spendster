@@ -170,3 +170,16 @@ func (us *Service) RefreshToken(existingrefreshToken string) (*resmodels.LoginUs
 		RefreshToken: newRefreshToken,
 	}, nil
 }
+
+func (us *Service) DeleteUser(id string) error {
+	logging.Debug("delete user service start user_id=%s", id)
+
+	err := us.userRepo.DeleteUser(id)
+	if err != nil {
+		logging.Error("delete user service failed user_id=%s err=%v", id, err)
+		return err
+	}
+
+	logging.Info("delete user service success user_id=%s", id)
+	return nil
+}

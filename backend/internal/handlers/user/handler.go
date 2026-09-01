@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	requestcontext "expense-backend/internal/context"
 	"expense-backend/internal/logging"
 	models "expense-backend/internal/models/req_dto"
 	reqmodels "expense-backend/internal/models/req_dto"
@@ -20,8 +21,7 @@ func New(userService *user.Service) *Handler {
 	}
 }
 
-func (userHandler *Handler) HandleRegisterUser(w http.ResponseWriter,
-	r *http.Request) {
+func (userHandler *Handler) HandleRegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	var request reqmodels.RegisterUserRequestDTO
 
@@ -189,4 +189,23 @@ func (userHandler *Handler) HandleTokenRefresh(w http.ResponseWriter, r *http.Re
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
+}
+
+func (userHandler *Handler) HandleDeleteUser(w http.ResponseWriter, r *http.Request) {
+	userID, ok := requestcontext.GetUserID(r.Context())
+	if !ok {
+		logging.Error("delete request missing user id path=%s", r.URL.Path)
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	err := userHandler.userService.DeleteUser(userID)
+	if err != nil {
+		logging.Error("delete request failed path=%s user_id=%s err=%v", r.URL.Path, userID, err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	logging.Response(r.Method, r.URL.Path, http.StatusOK, userID)
+	w.WriteHeader(http.StatusNoContent)
 }

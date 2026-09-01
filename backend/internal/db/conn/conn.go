@@ -6,24 +6,11 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
 func Connect() (*sql.DB, error) {
-
-	// // Load env
-	// err := godotenv.Load()
-	// if err != nil {
-	// 	return nil, fmt.Errorf("failed to load .env file: %w", err)
-	// }
-
-	// Initialize string parameters
-	// host := os.Getenv("DB_HOST")
-	// port := os.Getenv("DB_PORT")
-	// user := os.Getenv("DB_USER")
-	// password := os.Getenv("DB_PASSWORD")
-	// dbName := os.Getenv("DB_NAME")
-	// sslMode := os.Getenv("DB_SSLMODE")
 
 	// Connection string for DB (DSN: Data Source Name)
 	connectEnv := os.Getenv("DB_MODE")
@@ -34,6 +21,8 @@ func Connect() (*sql.DB, error) {
 		connectionString = os.Getenv("DB_DEV")
 	case "prod":
 		connectionString = os.Getenv("DB_PROD")
+	case "local":
+		connectionString = getConnStringLocal()
 	default:
 		logging.Error("database connection failed invalid mode=%s", connectEnv)
 		return nil, fmt.Errorf("invalid connection mode")
@@ -57,4 +46,23 @@ func Connect() (*sql.DB, error) {
 
 	// Return connection
 	return db, nil
+}
+
+func getConnStringLocal() string {
+	err := godotenv.Load()
+	if err != nil {
+		logging.Error("failed to load .env file err=%v", err)
+		return ""
+	}
+
+	// Initialize string parameters
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
+	sslMode := os.Getenv("DB_SSLMODE")
+
+	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", host, port, user, password, dbName, sslMode)
+
 }

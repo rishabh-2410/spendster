@@ -113,3 +113,27 @@ func (ur *User) RevokeUser(hashedToken string) error {
 
 	return nil
 }
+
+func (ur *User) DeleteUser(id string) error {
+	logging.Debug("user repository delete user user_id=%s", id)
+	result, err := ur.db.Exec(`DELETE FROM users WHERE id = $1`, id)
+	if err != nil {
+		logging.Error("user repository delete user exec failed err=%v", err)
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		logging.Error("user repository delete user rows failed err=%v", err)
+		return err
+	}
+
+	if rowsAffected == 0 {
+		logging.Error("user repository delete user no rows affected")
+		return errors.New("user not found")
+	}
+
+	logging.Info("user repository delete user success user_id=%s", id)
+
+	return nil
+}
